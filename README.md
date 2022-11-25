@@ -1,5 +1,5 @@
 # musichain
-# cico
+# cic
 ## Project setup
 ```
 yarn install
