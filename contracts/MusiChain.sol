@@ -9,7 +9,6 @@ contract MusiChain {
 
     struct Song{
         address payable songOwner; //l'indirizzo dell'artista
-        uint songId;
         string genre;
         string album;
         uint year;
@@ -22,13 +21,11 @@ contract MusiChain {
         uint rent_oneyear;
     }
     
-    uint private idSong; // id assegnato progressivamente ad ogni canzone inserita in MusiChain
     uint private idArtist; // id assegnato progressivamente ad ogni artista inserito in MusiChain
 
 
     constructor(){
         owner = payable(msg.sender);
-        idSong = 1;
         idArtist = 1;
     }
 
@@ -82,8 +79,7 @@ contract MusiChain {
         uint rent_oneweek = 6000000000000000 wei; //6,89 euro
         uint rent_onemonth = 20000000000000000 wei; //22,98 euro
         uint rent_oneyear = 200000000000000000 wei; //229,75 euro
-        songs[artists[msg.sender]][songName] = Song(payable(msg.sender), idSong, genre, album, year, length, purchasingCost, rent_oneday, rent_threedays,rent_oneweek,rent_onemonth,rent_oneyear); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
-        idSong++; //aggiornamento progressivo dell'id da associare alle canzoni
+        songs[artists[msg.sender]][songName] = Song(payable(msg.sender), genre, album, year, length, purchasingCost, rent_oneday, rent_threedays,rent_oneweek,rent_onemonth,rent_oneyear); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
         string memory artistName = artists[msg.sender];
         emit songAdded(msg.sender, artistsCheck[artistName], songName, artistName, block.timestamp);
     }
