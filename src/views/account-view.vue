@@ -1,7 +1,7 @@
 <template>
         
   <v-container>
-    <h1 align="center">Registrati come artista</h1>
+    <h1 align="center">Registration as Artist</h1>
     <v-row justify="center">
       <v-col align="center" cols="12" md="6">
         <v-form
@@ -11,7 +11,7 @@
         >
           <v-text-field
             v-model="name"
-            :counter="10"
+            :counter="15"
             :rules="nameRules"
             label="Name"
             required
@@ -56,7 +56,7 @@
       name: '',
       nameRules: [
         v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+        v => (v && v.length <= 15) || 'Name must be less than 15 characters',
       ],
     }),
 
