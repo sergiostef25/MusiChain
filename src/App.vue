@@ -6,7 +6,7 @@
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title class="display-1">Sections</v-toolbar-title>
+      <v-toolbar-title class="display-1">MusiChain</v-toolbar-title>
       <!-- connect-wallet button is visible if the wallet is not connected -->
       <v-btn text v-if="!connected" @click="connect" fixed right>Connect Wallet</v-btn>
       <v-btn text v-if="connected" disabled fixed right>Wallet Connected</v-btn>
@@ -62,7 +62,7 @@ export default {
         links: [
           {icon: 'mdi-home', text: 'Home', route: '/'},
           {icon: 'mdi-account', text: 'Account', route: '/account'},
-          {icon: 'mdi-account', text: 'Songs', route: '/song'},
+          {icon: 'mdi-cloud', text: 'Songs', route: '/song'},
           {icon: 'mdi-play', text: 'Music Player', route: '/player'},
         ]
       }
