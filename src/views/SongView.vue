@@ -18,13 +18,24 @@
               required
             ></v-text-field>
 
-            <v-text-field
-              v-model="genre"
-              :counter="20"
-              :rules="genreRules"
-              label="Genre"
-              required
-            ></v-text-field>
+            <v-card>
+           <v-container fluid>
+           <v-row
+           align="center"
+           >
+           <v-col cols="12">
+          <v-autocomplete
+            v-model="value"
+            :items="items"
+            dense
+            
+            label="Genre"
+          ></v-autocomplete>
+
+          </v-col>
+          </v-row>
+          </v-container>
+          </v-card>
 
             <v-text-field
               v-model="Album"
@@ -88,6 +99,9 @@
       data: () => ({
         valid: true,
         nameSong: '',
+        items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop'],
+        values: ['pop', 'rock'],
+        value: null,
         nameRules: [
           v => !!v || 'Name of song is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
@@ -100,6 +114,10 @@
         yearRules: [
           v => !!v || 'Year of song is required',
           v => (v && v.length <= 4) || 'It is not possible register a song from the future',
+        ],
+        albumRules: [
+          v => !!v || 'Album of song is required',
+          v => (v && v.length <= 25) || 'Name must be less than 25 characters',
         ],
       }),
   
