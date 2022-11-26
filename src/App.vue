@@ -62,7 +62,8 @@ export default {
         links: [
           {icon: 'mdi-home', text: 'Home', route: '/'},
           {icon: 'mdi-account', text: 'Account', route: '/account'},
-          {icon: 'mdi-cloud-arrow-up', text: 'Songs', route: '/song'},
+          {icon: 'mdi-cloud', text: 'Songs', route: '/song'},
+          {icon: 'mdi-play', text: 'Music Player', route: '/player'},
         ]
       }
     },
