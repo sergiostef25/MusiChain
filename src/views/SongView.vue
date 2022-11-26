@@ -26,21 +26,30 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="nameArtist"
+              v-model="genre"
               :counter="20"
-              :rules="nameArtistRules"
-              label="Name of Artist"
+              :rules="genreRules"
+              label="Genre"
               required
             ></v-text-field>
 
             <v-text-field
-              v-model="genre"
-              :counter="20"
-              :rules="nameArtistRules"
-              label="Name of Artist"
+              v-model="Album"
+              :counter="10"
+              :rules="albumRules"
+              label="Album"
               required
             ></v-text-field>
-  
+
+            <v-text-field
+              v-model="Album"
+              :counter="10"
+              :rules="albumRules"
+              label="Album"
+              required
+            ></v-text-field>
+
+
             <v-btn
               v-if="connected"
               :disabled="!valid"
