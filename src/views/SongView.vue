@@ -18,24 +18,23 @@
               required
             ></v-text-field>
 
-            <v-card>
-           <v-container fluid>
+            <br>
+           
            <v-row
            align="center"
            >
-           <v-col cols="12">
+           <v-col cols="13">
           <v-autocomplete
-            v-model="value"
+            v-model="genre"
             :items="items"
+            :rules="genreRules"
             dense
-            
             label="Genre"
           ></v-autocomplete>
-
           </v-col>
           </v-row>
-          </v-container>
-          </v-card>
+          
+          
 
             <v-text-field
               v-model="Album"
@@ -101,7 +100,7 @@
         nameSong: '',
         items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop','jazz','classical','electronic','blues','vocal','vaporwave','traditional'],
         values: ['pop', 'rock'],
-        value: null,
+        genre: null,
         nameRules: [
           v => !!v || 'Name of song is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
@@ -119,6 +118,10 @@
           v => !!v || 'Album of song is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
         ],
+        genreRules: [
+          v => !!v || 'Genre of song is required',  
+        ],
+
       }),
   
       props: {
