@@ -6,7 +6,7 @@
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title class="display-1">Sections</v-toolbar-title>
+      <v-toolbar-title class="display-1">MusiChain</v-toolbar-title>
       <!-- connect-wallet button is visible if the wallet is not connected -->
       <v-btn text v-if="!connected" @click="connect" fixed right>Connect Wallet</v-btn>
       <v-btn text v-if="connected" disabled fixed right>Wallet Connected</v-btn>

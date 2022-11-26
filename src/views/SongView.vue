@@ -9,13 +9,6 @@
             v-model="valid"
             lazy-validation
           >
-          <v-text-field
-              v-model="addressUser"
-              :counter="35"
-              :rules="addressUserRules"
-              label="Address of User"
-              required
-            ></v-text-field>
             
             <v-text-field
               v-model="nameSong"
@@ -42,10 +35,18 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="Album"
-              :counter="10"
-              :rules="albumRules"
-              label="Album"
+              v-model="Year"
+              :counter="4"
+              :rules="yearRules"
+              label="Year"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="Lenght"
+              :counter="4"
+              :rules="lenghtRules"
+              label="Lenght in seconds"
               required
             ></v-text-field>
 
@@ -91,10 +92,14 @@
           v => !!v || 'Name of song is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
         ],
-        addressUser: '',
-        addressUserRules: [
-          v => !!v || 'Address of User is required',
-          v => (v && v.length <= 35) || 'Address must be less than 35 characters',
+        Lenght: '',
+        lenghtRules: [
+          v => !!v || 'Lenght of song is required',
+          v => (v && v.length <= 4) || 'It is not possible register a song of 2 hours',
+        ],
+        yearRules: [
+          v => !!v || 'Year of song is required',
+          v => (v && v.length <= 4) || 'It is not possible register a song from the future',
         ],
       }),
   
