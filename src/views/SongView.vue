@@ -99,7 +99,7 @@
       data: () => ({
         valid: true,
         nameSong: '',
-        items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop'],
+        items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop','jazz','classical','electronic','blues','vocal','vaporwave','traditional'],
         values: ['pop', 'rock'],
         value: null,
         nameRules: [
