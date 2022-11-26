@@ -60,6 +60,16 @@
               required
             ></v-text-field>
 
+            <template>
+            <v-file-input
+            counter
+            show-size
+            truncate-length="17"
+             accept="image/*"
+              label="File input"
+             ></v-file-input>
+            </template>
+
 
             <v-btn
               v-if="connected"
