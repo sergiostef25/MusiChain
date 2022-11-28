@@ -1,5 +1,5 @@
 <template>
-        
+   
   <v-container>
     <h1 align="center">Registration as Artist</h1>
     <v-row justify="center">
