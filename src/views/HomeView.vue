@@ -2,6 +2,7 @@
   <div class="home">
     <v-parallax
     dark
+    height="630"
     src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
   >
     <v-row

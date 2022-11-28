@@ -1,7 +1,7 @@
 <template>
         
     <v-container>
-      <h1 align="center">Recording of Song</h1>
+      <h1 align="center">Buy a Song</h1>
       <v-row justify="center">
         <v-col align="center" cols="12" md="6">
           <v-form
@@ -9,11 +9,19 @@
             v-model="valid"
             lazy-validation
           >
+
+          <v-text-field
+              v-model="Artist"
+              :counter="10"
+              :rules="artistRules"
+              label="Name of Artist"
+              required
+            ></v-text-field>
             
             <v-text-field
               v-model="nameSong"
               :counter="25"
-              :rules="nameRules"
+              :rules="songRules"
               label="Name of Song"
               required
             ></v-text-field>
@@ -25,51 +33,26 @@
            >
            <v-col cols="13">
           <v-autocomplete
-            v-model="genre"
+            v-model="rent"
             :items="items"
-            :rules="genreRules"
+            :rules="rentRules"
             dense
-            label="Genre"
+            label="Rent period"
           ></v-autocomplete>
           </v-col>
           </v-row>
           
           
 
-            <v-text-field
-              v-model="Album"
-              :counter="10"
-              :rules="albumRules"
-              label="Album"
-              required
-            ></v-text-field>
+            
 
             <v-text-field
-              v-model="Year"
+              v-model="Amount"
               :counter="4"
-              :rules="yearRules"
-              label="Year"
+              :rules="amountRules"
+              label="Amount"
               required
             ></v-text-field>
-
-            <v-text-field
-              v-model="Lenght"
-              :counter="4"
-              :rules="lenghtRules"
-              label="Lenght in seconds"
-              required
-            ></v-text-field>
-
-            <template>
-            <v-file-input
-            counter
-            show-size
-            truncate-length="17"
-             accept="image/*"
-              label="File input"
-             ></v-file-input>
-            </template>
-
 
             <v-btn
               v-if="connected"
@@ -108,29 +91,27 @@
       data: () => ({
         valid: true,
         nameSong: '',
-        items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop','jazz','classical','electronic','blues','vocal','vaporwave','traditional'],
-        values: ['pop', 'rock'],
+        items: ['1 day', '3 days', '7 days', '31 days', '365 days'],
+        values: ['1 day', '365 days'],
         genre: null,
-        nameRules: [
+        songRules: [
           v => !!v || 'Name of song is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
         ],
-        Lenght: '',
-        lenghtRules: [
+        Artist: '',
+        artistRules: [
           v => !!v || 'Lenght of song is required',
-          v => (v && v.length <= 4) || 'It is not possible register a song of 2 hours',
+          v => (v && v.length <= 10) || 'Name must be less than 10 characters',
         ],
-        yearRules: [
-          v => !!v || 'Year of song is required',
-          v => (v && v.length <= 4) || 'It is not possible register a song from the future',
+        rentRules: [
+          v => !!v || 'Rent period is required',
+          v => (v && v.length <= 15) || 'Error',
         ],
-        albumRules: [
-          v => !!v || 'Album of song is required',
-          v => (v && v.length <= 25) || 'Name must be less than 25 characters',
+        amountRules: [
+          v => !!v || 'You can not buy without money',
+          v => (v && v.length <= 4) || 'Less than 4 character',
         ],
-        genreRules: [
-          v => !!v || 'Genre of song is required',  
-        ],
+        
 
       }),
   
