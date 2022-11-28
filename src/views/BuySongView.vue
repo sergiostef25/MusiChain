@@ -41,10 +41,6 @@
           ></v-autocomplete>
           </v-col>
           </v-row>
-          
-          
-
-            
 
             <v-text-field
               v-model="Amount"
@@ -53,6 +49,8 @@
               label="Amount"
               required
             ></v-text-field>
+
+
 
             <v-btn
               v-if="connected"
@@ -63,6 +61,16 @@
             >
               Validate
             </v-btn>
+
+            <v-btn
+              color="success"
+              class="mr-4"
+              @click="validate"
+              :rules="buyRules"
+              v-for="link in links" :key="link.text" router :to="link.route"
+              >
+              Buy
+            </v-btn>
   
             <v-btn
               color="error"
@@ -71,13 +79,9 @@
             >
               Reset Form
             </v-btn>
-  
-            <v-btn
-              color="warning"
-              @click="resetValidation"
-            >
-              Reset Validation
-            </v-btn>
+
+            
+
           </v-form>
         </v-col>
       </v-row>
@@ -90,7 +94,12 @@
     export default {
       data: () => ({
         valid: true,
+        links: [
+          { route: '/failed'},
+          
+        ],
         nameSong: '',
+        Amount:'',
         items: ['1 day', '3 days', '7 days', '31 days', '365 days'],
         values: ['1 day', '365 days'],
         genre: null,
@@ -111,7 +120,9 @@
           v => !!v || 'You can not buy without money',
           v => (v && v.length <= 4) || 'Less than 4 character',
         ],
-        
+        buyRules: [
+          v => (v && v.length <= 25) || 'Insufficient!',
+        ],
 
       }),
   

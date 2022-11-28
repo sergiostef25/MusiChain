@@ -5,6 +5,9 @@ import AccountView from '../views/AccountView.vue'
 import SongView from '../views/SongView.vue'
 import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
+import SuccessfulPurchaseView from '../views/SuccessfulPurchaseView.vue'
+import PaymentFailedView from '../views/PaymentFailedView.vue'
+
 
 Vue.use(VueRouter)
 
@@ -36,6 +39,20 @@ const routes = [
     name: 'buy',
     component: BuySongView
   },
+
+  {
+    path: '/successful',
+    name: 'successful',
+    component: SuccessfulPurchaseView
+  },
+
+  {
+    path: '/failed',
+    name: 'failed',
+    component: PaymentFailedView
+  },
+
+
 ]
 
 const router = new VueRouter({
