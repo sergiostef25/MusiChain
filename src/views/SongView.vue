@@ -99,9 +99,9 @@
         </v-col>
       </v-row>
     </v-container>
-  </template>
+</template>
   
-  <script>
+<script>
   
   
     export default {
