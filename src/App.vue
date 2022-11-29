@@ -38,7 +38,7 @@
 
       <v-container fluid>
         <!-- If using vue-router -->
-        <router-view :connected="connected"></router-view>
+        <router-view :connected="connected" :address="address"></router-view>
 
       </v-container>
 
@@ -56,6 +56,7 @@ export default {
   name: 'App',
   data() {
       return {
+        address: null,
         connected: false,
         drawer: false,
         group: null,
@@ -76,6 +77,7 @@ export default {
           window.ethereum.request({method: 'eth_requestAccounts'})
           .then(() => {
             this.connected = true;
+            this.address = window.ethereum.selectedAddress;
           })
         }
       },

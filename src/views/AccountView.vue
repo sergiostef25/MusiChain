@@ -24,7 +24,7 @@
             class="mr-4"
             @click="validate"
           >
-            Validate
+            Subscribe
           </v-btn>
 
           <v-btn
@@ -32,26 +32,26 @@
             class="mr-4"
             @click="reset"
           >
-            Reset Form
+            Cancel
           </v-btn>
 
-          <v-btn
-            color="warning"
-            @click="resetValidation"
-          >
-            Reset Validation
-          </v-btn>
         </v-form>
       </v-col>
+    </v-row>
+    <v-row justify="center">
+      <h3 v-if="done">Iscritto come artista</h3>
+      <h3 v-if="!done && connected">Sei già un artista</h3>
     </v-row>
   </v-container>
 </template>
 
 <script>
+const Web3 = require('web3');
+const MusiChain = require('../../build/contracts/MusiChain.json');
 
-
-  export default {
+export default {
     data: () => ({
+      done: false,
       valid: true,
       name: '',
       nameRules: [
@@ -61,19 +61,34 @@
     }),
 
     props: {
-      connected: Boolean
+      connected: Boolean,
+      address: String
     },
 
     methods: {
       validate () {
-        this.$refs.form.validate()
+        this.$refs.form.validate();
+        const init = async () => {
+        const web3 = new Web3(window.ethereum);
+        const id = await web3.eth.net.getId();
+        const deployedNetwork = MusiChain.networks[id];
+        const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+
+        contractMusiChain.methods.addArtist(this.name).send({from: this.address})
+        .then(receipt => {
+            this.done = true;
+            console.log(receipt);
+        }).catch(error => {
+            console.log(error.message);
+        });
+      }
+
+      init();
       },
+
       reset () {
         this.$refs.form.reset()
       },
-      resetValidation () {
-        this.$refs.form.resetValidation()
-      },
     },
-  }
+}
 </script>
