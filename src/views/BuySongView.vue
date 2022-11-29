@@ -86,7 +86,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </template>
+</template>
   
   <script>
   
@@ -127,7 +127,8 @@
       }),
   
       props: {
-        connected: Boolean
+        connected: Boolean,
+        address: String
       },
   
       methods: {

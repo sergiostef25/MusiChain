@@ -49,6 +49,7 @@
 
     props: {
       connected: Boolean,
+      address: String,
     },
 
     methods:{

@@ -23,6 +23,11 @@ export default{
         file: null,
         data: null,
     }),
+    
+    props: {
+      connected: Boolean,
+      address: String,
+    },
 
     methods: {
         crypt_decrypt: function(){

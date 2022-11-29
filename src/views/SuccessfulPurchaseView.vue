@@ -48,8 +48,9 @@
       },
   
       props: {
-        connected: Boolean,
-      },
+      connected: Boolean,
+      address: String,
+    },
   
       methods:{
         
