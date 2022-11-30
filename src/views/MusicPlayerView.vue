@@ -52,7 +52,8 @@ export default{
                 this.data = songRef.fullPath;
                 getDownloadURL(songRef)
                 .then((url) => {
-                    this.file = url
+                    //this.file = url
+                    console.log(url)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -72,11 +73,18 @@ export default{
                     const metadata = {
                     contentType: 'audio/mpeg',
                     };
+
+
                     //const bytes_dec = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
                     uploadBytes(ref(storage, 'song_dec.mp3'), typedArray, metadata).then((snapshot) => {
                         console.log(snapshot);
                         console.log('Uploaded an array!');
                     });
+
+                    const blob = new Blob([byteArray], { type: "audio/wav" });
+                    this.file = window.URL.createObjectURL(blob);
+                    console.log('Stringa file = '+byteArray);
+                    console.log(this.file);
                 }
                 }).catch((error) => {
                     console.log(error)

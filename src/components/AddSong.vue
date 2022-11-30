@@ -1,9 +1,9 @@
 <template>
         
     <v-container>
-      <h1 align="center">Recording of Song</h1>
+      <h1 align="center">Let's add a song!</h1>
       <v-row justify="center">
-        <v-col align="center" cols="12" md="6">
+        <v-col align="center" cols="12" md="8">
           <v-form
             ref="form"
             v-model="valid"
@@ -14,7 +14,7 @@
               v-model="nameSong"
               :counter="25"
               :rules="nameRules"
-              label="Name of Song"
+              label="Song Name"
               required
             ></v-text-field>
 
@@ -45,7 +45,7 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="Year"
+              v-model="year"
               :counter="4"
               :rules="yearRules"
               label="Year"
@@ -65,10 +65,22 @@
             counter
             show-size
             truncate-length="17"
-             accept="image/*"
-              label="File input"
+              label="Song File"
+              accept = "audio/mpeg"
+              v-model="songFile"
              ></v-file-input>
             </template>
+
+            <v-file-input
+            @change="previewCover"
+            counter
+            show-size
+            truncate-length="17"
+              label="Song/Album Cover"
+              accept = "image/jpg"
+              v-model="songCover"
+             ></v-file-input>
+          
 
 
             <v-btn
@@ -78,7 +90,7 @@
               class="mr-4"
               @click="validate"
             >
-              Validate
+              Add
             </v-btn>
   
             <v-btn
@@ -86,30 +98,39 @@
               class="mr-4"
               @click="reset"
             >
-              Reset Form
-            </v-btn>
-  
-            <v-btn
-              color="warning"
-              @click="resetValidation"
-            >
-              Reset Validation
+              Reset
             </v-btn>
           </v-form>
         </v-col>
+        <v-col align="center" cols="12" md="3" v-if="songCoverLink">
+          <v-alert type="success" :value="alert">
+          Song successfully added
+          </v-alert>
+          <v-img 
+            max-height="500"
+            max-width="500"
+            :src=songCoverLink
+          ></v-img>
+        </v-col>
+
       </v-row>
     </v-container>
 </template>
   
 <script>
+import { storage } from "@/firebase";
+import { ref, uploadBytes} from "firebase/storage"; 
   
-  
-    export default {
+export default {
+
+
       data: () => ({
+        alert: false,
         valid: true,
+        songCoverLink: null,
         nameSong: '',
-        items: ['indie', 'pop', 'rock', 'techno','soul','reggae','country','funk','hip hop','jazz','classical','electronic','blues','vocal','vaporwave','traditional'],
-        values: ['pop', 'rock'],
+        items: ['Indie', 'Pop', 'Rock', 'Techno','Soul','Reggae','Country','Funk','Hip Hop','Jazz','Classical','Electronic','Blues','Vocal','Vaporwave','Traditional'],
+        values: ['Pop', 'Rock'],
         genre: null,
         nameRules: [
           v => !!v || 'Name of song is required',
@@ -138,17 +159,59 @@
       connected: Boolean,
       address: String,
     },
-  
+
+    created(){
+    
+    },
+
       methods: {
         validate () {
-          this.$refs.form.validate()
+          this.$refs.form.validate();
+            var reader = new FileReader();
+            var reader2 = new FileReader();
+            // Use the javascript reader object to load the contents
+            // of the file in the v-model prop
+            reader.readAsArrayBuffer(this.songFile);
+            reader2.readAsArrayBuffer(this.songCover);
+            reader.onload = () => {
+              console.log(reader.result);
+              var metadata = {
+                    contentType: 'audio/mpeg',
+                    };
+              
+              uploadBytes(ref(storage, this.nameSong+'.mp3'), reader.result, metadata).then((snapshot) => {
+                          console.log(snapshot);
+                      });
+            }
+
+            reader2.onload = () => {
+              setTimeout(()=>{
+                this.alert=true
+              },100)
+              console.log(reader2.result);
+              var metadata = {
+                    contentType: 'image/jpg',
+                    };
+              
+              uploadBytes(ref(storage, this.album+'_cover.jpg'), reader2.result, metadata).then((snapshot) => {
+                          console.log(snapshot);
+                          this.$refs.form.reset();
+                      });
+              
+              setTimeout(()=>{
+                this.alert=false
+              },3000)
+            }
+            
         },
+
         reset () {
           this.$refs.form.reset()
         },
-        resetValidation () {
-          this.$refs.form.resetValidation()
-        },
+
+        previewCover () {
+          this.songCoverLink = URL.createObjectURL(this.songCover)
+        }
       },
     }
   </script>

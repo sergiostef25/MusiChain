@@ -38,7 +38,7 @@
 
       <v-container fluid>
         <!-- If using vue-router -->
-        <router-view :connected="connected" :address="address"></router-view>
+        <router-view :connected="connected" :address="address" :artistName="artistName"></router-view>
 
       </v-container>
 
@@ -51,19 +51,21 @@
 </template>
 
 <script>
+const Web3 = require('web3');
+const MusiChain = require('../build/contracts/MusiChain.json');
 
 export default {
   name: 'App',
   data() {
       return {
         address: null,
+        artistName: 'none',
         connected: false,
         drawer: false,
         group: null,
         links: [
           {icon: 'mdi-home', text: 'Home', route: '/'},
-          {icon: 'mdi-account-circle', text: 'Account', route: '/account'},
-          {icon: 'mdi-music', text: 'Songs', route: '/song'},
+          {icon: 'mdi-account-circle', text: 'Artist', route: '/artist'},
           {icon: 'mdi-cart-arrow-down', text: 'Buy Song', route: '/buy'},
           {icon: 'mdi-play', text: 'Music Player', route: '/player'},
         ]
@@ -78,6 +80,21 @@ export default {
           .then(() => {
             this.connected = true;
             this.address = window.ethereum.selectedAddress;
+
+            const init = async () => {
+            const web3 = new Web3(window.ethereum);
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+
+            const result = await contractMusiChain.methods.artists(this.address).call();
+            if(result.length > 0){
+              this.artistName = result;
+            }
+          }
+
+          init();
+          
           })
         }
       },
