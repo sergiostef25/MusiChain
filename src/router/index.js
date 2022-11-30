@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import AccountView from '../views/AccountView.vue'
-import SongView from '../views/SongView.vue'
+import ArtistView from '../views/ArtistView.vue'
 import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
 import SuccessfulPurchaseView from '../views/SuccessfulPurchaseView.vue'
@@ -18,14 +17,9 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/account',
-    name: 'account',
-    component: AccountView
-  },
-  {
-    path: '/song',
-    name: 'song',
-    component: SongView
+    path: '/artist',
+    name: 'artist',
+    component: ArtistView
   },
 
   {
