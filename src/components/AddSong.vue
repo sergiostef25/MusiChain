@@ -37,7 +37,7 @@
           
 
             <v-text-field
-              v-model="Album"
+              v-model="album"
               :counter="10"
               :rules="albumRules"
               label="Album"
@@ -196,6 +196,7 @@ export default {
               uploadBytes(ref(storage, this.album+'_cover.jpg'), reader2.result, metadata).then((snapshot) => {
                           console.log(snapshot);
                           this.$refs.form.reset();
+                          this.songCoverLink = null
                       });
               
               setTimeout(()=>{
