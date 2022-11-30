@@ -4,8 +4,6 @@ import HomeView from '../views/HomeView.vue'
 import ArtistView from '../views/ArtistView.vue'
 import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
-import SuccessfulPurchaseView from '../views/SuccessfulPurchaseView.vue'
-import PaymentFailedView from '../views/PaymentFailedView.vue'
 
 
 Vue.use(VueRouter)
@@ -34,17 +32,6 @@ const routes = [
     component: BuySongView
   },
 
-  {
-    path: '/successful',
-    name: 'successful',
-    component: SuccessfulPurchaseView
-  },
-
-  {
-    path: '/failed',
-    name: 'failed',
-    component: PaymentFailedView
-  },
 
 
 ]

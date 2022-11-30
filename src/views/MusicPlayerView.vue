@@ -48,7 +48,7 @@ export default{
 
 
                 
-                const songRef = ref(storage, 'password-infinity-123276.mp3');
+                const songRef = ref(storage, 'Pesto.mp3');
                 this.data = songRef.fullPath;
                 getDownloadURL(songRef)
                 .then((url) => {
@@ -66,16 +66,13 @@ export default{
                     var wordArray = crypto.lib.WordArray.create(byteArray);
                     console.log(wordArray);
                     var encrypted = crypto.AES.encrypt(wordArray, "Secret Passphrase").toString();
-                    //console.log('File criptato = ' + encrypted);
+                    console.log('File criptato = ' + encrypted);
                     var decrypted = crypto.AES.decrypt(encrypted, "Secret Passphrase");             
                     var typedArray = convertWordArrayToUint8Array(decrypted);
                     console.log(typedArray);
                     const metadata = {
                     contentType: 'audio/mpeg',
                     };
-
-
-                    //const bytes_dec = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
                     uploadBytes(ref(storage, 'song_dec.mp3'), typedArray, metadata).then((snapshot) => {
                         console.log(snapshot);
                         console.log('Uploaded an array!');

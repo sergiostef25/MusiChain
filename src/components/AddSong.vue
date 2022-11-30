@@ -201,7 +201,7 @@ export default {
               
               setTimeout(()=>{
                 this.alert=false
-              },3000)
+              },8000)
             }
             
         },
