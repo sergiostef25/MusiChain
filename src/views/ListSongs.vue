@@ -8,7 +8,7 @@
             ref="form"
             v-model="valid"
             lazy-validation
-          >
+            >
 
           <br>
 
@@ -17,21 +17,22 @@
       max-width="344"
       outlined
      >
-      <v-list-item three-line>
+      <v-list-item three-line >
         <v-list-item-content>
           <div class="text-overline mb-4">
-            Album
+            album
           </div>
           <v-list-item-title class="text-h5 mb-1">
-            Title Song
+            Title
           </v-list-item-title>
-          <v-list-item-subtitle>idk what write</v-list-item-subtitle>
+          <v-list-item-subtitle>artist</v-list-item-subtitle>
         </v-list-item-content>
   
         <v-list-item-avatar
           tile
           size="80"
           color="grey"
+          src="https://m.media-amazon.com/images/I/81rYyY4k+QL._AC_SL1425_.jpg"
         ></v-list-item-avatar>
       </v-list-item>
   
@@ -53,5 +54,29 @@
   </template>
 
 <script>
-export default {}
+export default {
+    data: () => ({
+        songs: [
+          {title: 'Levitating', artist: 'Dua Lipa', album: 'Future Nostalgia'},
+          {title: 'Physical', artist: 'Dua Lipa', album: 'Future Nostalgia'},
+          {title: 'Love Me Again', artist: 'Dua Lipa', album: 'Future Nostalgia'},
+  
+        ],
+
+        title1: this.songs.title,
+
+    }),
+
+    props: {
+        connected: Boolean,
+        address: String
+      },
+
+    methods: {
+        
+
+    },
+}
+
+
 </script>

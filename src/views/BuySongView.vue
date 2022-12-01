@@ -26,6 +26,7 @@
               required
             ></v-text-field>
 
+            <br>
           
             <v-autocomplete
               v-model="rentPeriod"
