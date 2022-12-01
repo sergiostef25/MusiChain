@@ -190,7 +190,7 @@ export default {
         },
 
         uploadSongAndCover(){
-          var reader = new FileReader();
+            var reader = new FileReader();
             var reader2 = new FileReader();
             reader.readAsArrayBuffer(this.songFile);
             reader2.readAsArrayBuffer(this.songCover);
@@ -200,7 +200,7 @@ export default {
                     contentType: 'audio/mpeg',
                     };
               
-              uploadBytes(ref(storage, this.artistName+'_'+this.songName+'.mp3'), reader.result, metadata).then((snapshot) => {
+              uploadBytes(ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3'), reader.result, metadata).then((snapshot) => {
                           console.log(snapshot);
                       });
             }
@@ -213,7 +213,7 @@ export default {
                     contentType: 'image/jpg',
                     };
               
-              uploadBytes(ref(storage, this.artistName+'_'+this.album+'_cover.jpg'), reader2.result, metadata).then((snapshot) => {
+              uploadBytes(ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.album.toLowerCase().replace(/\s/g, "")+'_cover.jpg'), reader2.result, metadata).then((snapshot) => {
                           console.log(snapshot);
                           setTimeout(()=>{
                             this.alert_succ=false;

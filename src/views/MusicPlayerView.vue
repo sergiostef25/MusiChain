@@ -1,16 +1,34 @@
 <template>
         
     <v-container>
-        <vuetify-audio :file="file" color="success" :ended="audioFinish" downloadable></vuetify-audio>
-        <v-btn @click="crypt_decrypt">Crypt-Decrypt</v-btn>
-        <h1>{{data}}</h1>
+        <v-row justify="center">
+            <v-col align="center" cols="12" md="8">
+                <v-file-input
+                counter
+                show-size
+                truncate-length="17"
+                label="Song File"
+                accept = "audio/mpeg"
+                v-model="songFile"
+                @change="upload"
+                ></v-file-input>
+            </v-col>
+        </v-row>
+            <v-row justidy="center">
+                <v-col align="center" cols="12" md="12">
+                    <vuetify-audio :file="file" color="success" :ended="audioFinish"></vuetify-audio>
+                    <h1>{{data}}</h1>
+                </v-col>
+                
+            </v-row>
+
+            
+        
     </v-container>
 </template>
   
 <script>
 //import { onMounted } from "vue";
-import { storage } from "@/firebase";
-import { ref, getDownloadURL, getBytes, uploadBytes} from "firebase/storage";
 const crypto = require("crypto-js");
 
 
@@ -22,6 +40,7 @@ export default{
     data: () => ({
         file: null,
         data: null,
+        songFile: null,
     }),
     
     props: {
@@ -30,8 +49,23 @@ export default{
     },
 
     methods: {
-        crypt_decrypt: function(){
-            function convertWordArrayToUint8Array(wordArray) {
+        upload(){
+            var reader = new FileReader();
+            reader.readAsText(this.songFile);
+            reader.onload = () => {
+              console.log(reader.result);
+              var decrypted = crypto.AES.decrypt(reader.result, "Secret Passphrase");             
+              var typedArray = this.convertWordArrayToUint8Array(decrypted);
+              const blob = new Blob([typedArray], { type: "audio/mpeg"});
+              this.file = window.URL.createObjectURL(blob);
+              setTimeout(() => {
+                 URL.revokeObjectURL(this.file);
+              },1000);
+              this.$refs.form.reset();
+            }
+
+        },
+        convertWordArrayToUint8Array(wordArray) {
                 var arrayOfWords = wordArray.words;
                 var length =wordArray.sigBytes;
                 var uInt8Array = new Uint8Array(length), index=0, word, i;
@@ -43,51 +77,7 @@ export default{
                     uInt8Array[index++] = word & 0xff;
                 }
                 return uInt8Array;
-                }
-
-
-
-                
-                const songRef = ref(storage, 'Calcutta_Pesto.mp3');
-                this.data = songRef.fullPath;
-                getDownloadURL(songRef)
-                .then((url) => {
-                    //this.file = url
-                    console.log(url)
-                })
-                .catch((error) => {
-                    console.log(error)
-                });
-
-                getBytes(songRef).then((bytes) =>{
-                    console.log('Canzone scaricata' + bytes);
-                    if (bytes) {
-                    const byteArray = new Uint8Array(bytes);
-                    var wordArray = crypto.lib.WordArray.create(byteArray);
-                    console.log(wordArray);
-                    var encrypted = crypto.AES.encrypt(wordArray, "Secret Passphrase").toString();
-                    console.log('File criptato = ' + encrypted);
-                    var decrypted = crypto.AES.decrypt(encrypted, "Secret Passphrase");             
-                    var typedArray = convertWordArrayToUint8Array(decrypted);
-                    console.log(typedArray);
-                    const metadata = {
-                    contentType: 'audio/mpeg',
-                    };
-                    uploadBytes(ref(storage, 'song_dec.mp3'), typedArray, metadata).then((snapshot) => {
-                        console.log(snapshot);
-                        console.log('Uploaded an array!');
-                    });
-
-                    const blob = new Blob([byteArray], { type: "audio/wav" });
-                    this.file = window.URL.createObjectURL(blob);
-                    console.log('Stringa file = '+byteArray);
-                    console.log(this.file);
-                }
-                }).catch((error) => {
-                    console.log(error)
-                });
-
-        }
+        },
     }
 }
 </script>

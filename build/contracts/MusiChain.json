@@ -22748,12 +22748,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0x183e7204d6Fa22FA3D5951335a48E5f74fD86a9c",
-      "transactionHash": "0x8e3095668088628f1ea2a4220496830c643be076d79503b37f962cb5adeef2b6"
+      "address": "0x3c57e5Cb96fecE05Cb993D6C19Ae5186101C357c",
+      "transactionHash": "0x625fe2ab9585f5799de3c14c44206b522862944fd6f41ddd891261ffce2774ac"
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-11-30T16:20:25.237Z",
+  "updatedAt": "2022-12-01T09:09:12.869Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

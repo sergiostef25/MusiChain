@@ -100,7 +100,6 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         songName: null,
         amount: null,
         artist: null,
-        file: null,
         rentList: ['1 day', '3 days', '1 week', '1 month', '1 year'],
         songRules: [
           v => !!v || 'Song name is required',
@@ -196,7 +195,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         },
 
         downloadSong(){
-          const songRef = ref(storage, this.artist+'_'+this.songName+'.mp3');
+          const songRef = ref(storage, this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3');
 
           getBytes(songRef).then((bytes) =>{
                     console.log('Canzone scaricata' + bytes);
@@ -205,9 +204,14 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
                     var wordArray = crypto.lib.WordArray.create(byteArray);
                     console.log(wordArray);
                     var encrypted = crypto.AES.encrypt(wordArray, "Secret Passphrase").toString();
-
-                    const blob = new Blob([encrypted], { type: "text/plain", name:"song.txt" });
-                    this.file = window.URL.createObjectURL(blob);
+                    console.log("File Criptato = "+encrypted);
+                    const blob = new Blob([encrypted], { type: "audio/mpeg"});
+                    const url = window.URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.href = url;
+                    a.download = this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "");
+                    a.click();
+                    URL.revokeObjectURL(url);
                 }
                 }).catch((error) => {
                     console.log(error)
