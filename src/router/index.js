@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import ArtistView from '../views/ArtistView.vue'
 import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
+import ListSongs from '../views/ListSongs.vue'
 
 
 Vue.use(VueRouter)
@@ -30,6 +31,12 @@ const routes = [
     path: '/buy',
     name: 'buy',
     component: BuySongView
+  },
+
+  {
+    path: '/list',
+    name: 'list',
+    component: ListSongs
   },
 
 
