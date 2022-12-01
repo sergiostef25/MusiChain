@@ -43,6 +43,7 @@
             ></v-text-field>
 
             <v-file-input
+            @change="previewSong"
             counter
             show-size
             truncate-length="17"
@@ -60,7 +61,9 @@
               accept = "image/jpg"
               v-model="songCover"
              ></v-file-input>
-             
+            <v-row justify="center">
+            
+            <v-col align="center" cols="12" md="7">
             <v-btn
               v-if="connected"
               :disabled="!valid"
@@ -78,23 +81,31 @@
             >
               Reset
             </v-btn>
+          </v-col>
+            <v-col align="center" cols="12" md="5" v-if="(alert_succ || alert_fail)">
+              <v-alert type="success" transition="fade-transition" :value="alert_succ">
+                Song successfully added
+                </v-alert>
+                <v-alert type="error" transition="fade-transition" :value="alert_fail">
+                Song not added beacause already present
+              </v-alert>
+            </v-col>
+          </v-row>
           </v-form>
+          <v-row justify="center">
+            
+          </v-row>
+          
         </v-col>
-        <v-col align="center" cols="12" md="3" v-if="songCoverLink">
+        <v-col align="center" cols="12" md="3" v-if="(songCoverLink || songFileLink)">
+        
           <v-img 
             max-height="500"
             max-width="500"
             :src=songCoverLink
           ></v-img>
+          <vuetify-audio :file="songFileLink" color="success" :ended="audioFinish"></vuetify-audio>
         </v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-alert type="success" transition="fade-transition" :value="alert_succ">
-          Song successfully added
-          </v-alert>
-          <v-alert type="error" transition="fade-transition" :value="alert_fail">
-          Song not added beacause already present
-          </v-alert>
       </v-row>
     </v-container>
 </template>
@@ -107,7 +118,9 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
 
 export default {
 
-
+      components: {
+        VuetifyAudio: () => import('vuetify-audio'),
+      },
       data: () => ({
         songName: null,
         genre: null,
@@ -116,6 +129,7 @@ export default {
         songFile: null,
         songCover: null,
         songCoverLink: null,
+        songFileLink: null,
         alert_succ: false,
         alert_fail: false,
         valid: true,
@@ -158,7 +172,12 @@ export default {
         },
 
         previewCover () {
-          this.songCoverLink = URL.createObjectURL(this.songCover)
+          this.songCoverLink = URL.createObjectURL(this.songCover);
+        },
+
+        previewSong(){
+          this.songFileLink = URL.createObjectURL(this.songFile);
+
         },
 
         submitSong(){
@@ -179,7 +198,7 @@ export default {
                   this.alert_fail=false;
                   this.$refs.form.reset();
                   this.songCoverLink = null;
-                  this.songCoverLink = null;
+                  this.songFileLink = null;
                   },3000);
                 
                 console.log('CANZONE NON AGGIUNTA'+error.message);
@@ -218,8 +237,10 @@ export default {
                           setTimeout(()=>{
                             this.alert_succ=false;
                             this.$refs.form.reset();
+                            URL.revokeObjectURL(this.songCoverLink);
+                            URL.revokeObjectURL(this.songFileLink);
+                            this.songFileLink = null;
                             this.songCoverLink = null;
-                            
                           },3000);
                          
 
