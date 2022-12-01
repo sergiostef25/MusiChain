@@ -1,7 +1,7 @@
 <template>
         
     <v-container>
-      <h1 align="center">Buy a Song</h1>
+      <h1 align="center">Rent a Song</h1>
       <v-row justify="center">
         <v-col align="center" cols="12" md="6">
           <v-form
@@ -11,45 +11,30 @@
           >
 
           <v-text-field
-              v-model="Artist"
+              v-model="artist"
               :counter="10"
               :rules="artistRules"
-              label="Name of Artist"
+              label="Artist Name"
               required
             ></v-text-field>
             
             <v-text-field
-              v-model="nameSong"
+              v-model="songName"
               :counter="25"
               :rules="songRules"
-              label="Name of Song"
+              label="Song Name"
               required
             ></v-text-field>
 
-            <br>
-           
-           <v-row
-           align="center"
-           >
-           <v-col cols="13">
-          <v-autocomplete
-            v-model="rent"
-            :items="items"
-            :rules="rentRules"
-            dense
-            label="Rent period"
-          ></v-autocomplete>
-          </v-col>
-          </v-row>
-
-            <v-text-field
-              v-model="Amount"
-              :counter="4"
-              :rules="amountRules"
-              label="Amount"
-              required
-            ></v-text-field>
-
+          
+            <v-autocomplete
+              v-model="rentPeriod"
+              :items="rentList"
+              :rules="rentRules"
+              dense
+              label="Rent period"
+              @change="displayAmount"
+            ></v-autocomplete>
 
 
             <v-btn
@@ -58,18 +43,8 @@
               color="success"
               class="mr-4"
               @click="validate"
-            >
-              Validate
-            </v-btn>
-
-            <v-btn
-              color="success"
-              class="mr-4"
-              @click="validate"
-              :rules="buyRules"
-              v-for="link in links" :key="link.text" router :to="link.route"
               >
-              Buy
+              Rent for {{amount}} ETH
             </v-btn>
   
             <v-btn
@@ -80,49 +55,65 @@
               Reset Form
             </v-btn>
 
+            <v-btn
+              v-if="file"
+              color="success"
+              class="mr-4"
+              >
+              Download
+            </v-btn>
             
 
           </v-form>
         </v-col>
       </v-row>
+      <v-row justify="center">
+        <v-col align="center" cols="12" md="3">
+          <v-alert type="success" transition="fade-transition" :value="alert_succ">
+           Song successfully rented
+          </v-alert>
+          
+          <v-alert type="error" transition="fade-transition" :value="alert_fail">
+          Fail, unable to rent the song
+          </v-alert>
+        </v-col>
+       </v-row>
+        
+      
     </v-container>
 </template>
   
-  <script>
-  
+<script>
+import { storage } from "@/firebase";
+import { ref, getBytes} from "firebase/storage";
+const crypto = require("crypto-js");
+const Web3 = require('web3');
+const MusiChain = require('../../build/contracts/MusiChain.json');  
   
     export default {
       data: () => ({
+        alert_succ: false,
+        alert_fail: false,
         valid: true,
-        links: [
-          { route: '/failed'},
-          
-        ],
-        nameSong: '',
-        Amount:'',
-        items: ['1 day', '3 days', '7 days', '31 days', '365 days'],
-        values: ['1 day', '365 days'],
-        genre: null,
+        rentPeriod: null,
+        rentPeriodNumeric: null,
+        songName: null,
+        amount: null,
+        artist: null,
+        file: null,
+        rentList: ['1 day', '3 days', '1 week', '1 month', '1 year'],
         songRules: [
-          v => !!v || 'Name of song is required',
+          v => !!v || 'Song name is required',
           v => (v && v.length <= 25) || 'Name must be less than 25 characters',
         ],
-        Artist: '',
         artistRules: [
-          v => !!v || 'Lenght of song is required',
-          v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+          v => !!v || 'Artist name is required',
+          v => (v && v.length <= 25) || 'Name must be less than 10 characters',
         ],
         rentRules: [
           v => !!v || 'Rent period is required',
-          v => (v && v.length <= 15) || 'Error',
         ],
-        amountRules: [
-          v => !!v || 'You can not buy without money',
-          v => (v && v.length <= 4) || 'Less than 4 character',
-        ],
-        buyRules: [
-          v => (v && v.length <= 25) || 'Insufficient!',
-        ],
+
 
       }),
   
@@ -133,14 +124,95 @@
   
       methods: {
         validate () {
-          this.$refs.form.validate()
+          this.$refs.form.validate();
+          this.rentSong();
+          //this.$refs.form.reset();
         },
         reset () {
           this.$refs.form.reset()
         },
-        resetValidation () {
-          this.$refs.form.resetValidation()
+
+        displayAmount(){
+          switch(this.rentPeriod){
+              case '1 day':
+                this.amount = 0.001;
+                this.rentPeriodNumeric = 1;
+              break;
+              case '3 days':
+                this.amount = 0.0025;
+                this.rentPeriodNumeric = 2;
+              break;
+              case '1 week':
+                this.amount = 0.006;
+                this.rentPeriodNumeric = 3;
+              break;
+              case '1 month':
+                this.amount = 0.02;
+                this.rentPeriodNumeric = 4;
+              break;
+              case '1 year':
+                this.amount = 0.2;
+                this.rentPeriodNumeric = 5;
+              break;
+            }
         },
+
+        rentSong(){
+          const init = async () => {
+            const web3 = new Web3(window.ethereum);
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            const amountWei = web3.utils.toWei(this.amount.toString());
+            const amountArtist = web3.utils.toWei((this.amount*0.98).toString());
+            const amountMusiChain = web3.utils.toWei((this.amount*0.02).toString());
+            console.log('Amount '+amountWei);
+            console.log('Amount Artist '+amountArtist);
+            console.log('Amount MusiChain '+amountMusiChain);
+            console.log('Renting '+this.rentPeriodNumeric);
+
+            contractMusiChain.methods.buySong(this.artist, this.songName, amountArtist, amountMusiChain, this.rentPeriodNumeric)
+            .send({from: this.address, value: amountWei})
+            .then(receipt => {
+              this.alert_succ=true;
+                console.log('CANZONE COMPRATA');
+                console.log(receipt);
+                this.downloadSong();
+                setTimeout(()=>{
+                            this.alert_succ=false;
+                            this.$refs.form.reset();
+                          },3000)
+            }).catch(error => {
+                console.log('CANZONE NON COMPRATA'+error.message);
+                this.alert_fail=true;
+                setTimeout(()=>{
+                            this.alert_fail=false;
+                            this.$refs.form.reset();
+                          },3000)
+            });
+          }
+
+          init();
+        },
+
+        downloadSong(){
+          const songRef = ref(storage, this.artist+'_'+this.songName+'.mp3');
+
+          getBytes(songRef).then((bytes) =>{
+                    console.log('Canzone scaricata' + bytes);
+                    if (bytes) {
+                    const byteArray = new Uint8Array(bytes);
+                    var wordArray = crypto.lib.WordArray.create(byteArray);
+                    console.log(wordArray);
+                    var encrypted = crypto.AES.encrypt(wordArray, "Secret Passphrase").toString();
+
+                    const blob = new Blob([encrypted], { type: "text/plain", name:"song.txt" });
+                    this.file = window.URL.createObjectURL(blob);
+                }
+                }).catch((error) => {
+                    console.log(error)
+                });
+        }
       },
     }
-  </script>
+</script>

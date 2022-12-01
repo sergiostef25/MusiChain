@@ -40,7 +40,7 @@
     </v-row>
     <v-row v-if="(connected && artistName != 'none')" justify="center">
       <h1>Hi, <span class="purple--text">{{artistName}}</span></h1>
-      <AddSong :connected="connected" :address="address" />
+      <AddSong :connected="connected" :address="address" :artistName="artistName"/>
     </v-row>
     
   </v-container>
@@ -54,7 +54,6 @@ import AddSong from '../components/AddSong.vue';
 export default {
 
     data: () => ({
-      subscribed: false,
       valid: true,
       name: '',
       nameRules: [
@@ -82,7 +81,7 @@ export default {
 
         contractMusiChain.methods.addArtist(this.name).send({from: this.address})
         .then(receipt => {
-            this.subscribed = true;
+            this.$emit("changeArtistName", this.name);
             console.log(receipt);
         }).catch(error => {
             console.log(error.message);
@@ -90,6 +89,10 @@ export default {
       }
 
       init();
+      },
+
+      changeName() {
+      
       },
 
       reset () {

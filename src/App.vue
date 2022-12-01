@@ -38,7 +38,7 @@
 
       <v-container fluid>
         <!-- If using vue-router -->
-        <router-view :connected="connected" :address="address" :artistName="artistName"></router-view>
+        <router-view :connected="connected" :address="address" :artistName="artistName" @changeArtistName="artistName = $event"></router-view>
 
       </v-container>
 
@@ -73,7 +73,7 @@ export default {
     },
 
   methods:{
-      connect: function(){
+      connect(){
 
         if(window.ethereum){
           window.ethereum.request({method: 'eth_requestAccounts'})
@@ -98,6 +98,8 @@ export default {
           })
         }
       },
+
+
   }
 };
 </script>
