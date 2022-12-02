@@ -12,6 +12,7 @@
             :rules="nameRules"
             label="Name"
             required
+            solo
         ></v-text-field>
 
         <v-btn

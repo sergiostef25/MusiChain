@@ -10,6 +10,7 @@
                 label="Song File"
                 accept = "audio/mpeg"
                 v-model="songFile"
+                solo
                 @change="upload"
                 ></v-file-input>
             </v-col>

@@ -1,21 +1,25 @@
 <template>
+  <div>    
+    
+      
         
-    <v-container>
-      <h1 align="center">Rent a Song</h1>
-      <v-row justify="center">
-        <v-col align="center" cols="12" md="6">
+        <v-container>
+          <h1 align="center">Rent a Song</h1>
+          <v-row justify="center">
+          <v-col align="center" cols="12" md="6">
           <v-form
             ref="form"
             v-model="valid"
             lazy-validation
           >
-
-          <v-text-field
+            <br>
+            <v-text-field
               v-model="artist"
               :counter="10"
               :rules="artistRules"
               label="Artist Name"
               required
+              solo
             ></v-text-field>
             
             <v-text-field
@@ -24,6 +28,7 @@
               :rules="songRules"
               label="Song Name"
               required
+              solo
             ></v-text-field>
 
           
@@ -32,6 +37,7 @@
               :items="rentList"
               :rules="rentRules"
               dense
+              solo
               label="Rent period"
               @change="displayAmount"
             ></v-autocomplete>
@@ -67,6 +73,7 @@
           </v-form>
         </v-col>
       </v-row>
+
       <v-row justify="center">
         <v-col align="center" cols="12" md="3">
           <v-alert type="success" transition="fade-transition" :value="alert_succ">
@@ -80,7 +87,11 @@
        </v-row>
         
       
-    </v-container>
+        </v-container>
+      
+      
+     
+  </div>  
 </template>
   
 <script>
