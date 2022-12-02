@@ -20,7 +20,7 @@
 
             <v-text-field
               v-model="album"
-              :counter="10"
+              :counter="25"
               :rules="albumRules"
               label="Album"
               required
