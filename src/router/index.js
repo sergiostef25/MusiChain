@@ -6,6 +6,8 @@ import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
 import ListView from '../views/ListView.vue'
 
+
+
 Vue.use(VueRouter)
 
 const routes = [

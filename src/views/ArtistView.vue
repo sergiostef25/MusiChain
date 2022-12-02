@@ -1,103 +1,87 @@
 <template>
-   
-  <v-container>
-    <h1 v-if="(!connected || artistName == 'none')" align="center">Subscribe as an artist</h1>
-    <v-row v-if="(!connected || artistName == 'none')" justify="center">
-      <v-col align="center" cols="12" md="6">
-        <v-form
-          ref="form"
-          v-model="valid"
-          lazy-validation
-        >
-          <v-text-field
-            v-model="name"
-            :counter="15"
-            :rules="nameRules"
-            label="Name"
-            required
-          ></v-text-field>
-
-          <v-btn
-            v-if="connected"
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="validate"
+  <v-parallax
+    dark
+    height="200"
+    src="https://wallpapersmug.com/download/1366x768/f5d72b/digital-art-horizon-mountains-forest-pinkish.jpg"
+  >      
+    <v-container>
+      <h1 align="center">Registration as Artist</h1>
+      <v-row justify="center">
+        <v-col align="center" cols="12" md="6">
+          <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation
           >
-            Subscribe
-          </v-btn>
-
-          <v-btn
-            color="error"
-            class="mr-4"
-            @click="reset"
-          >
-            Cancel
-          </v-btn>
-
-        </v-form>
-      </v-col>
-    </v-row>
-    <v-row v-if="(connected && artistName != 'none')" justify="center">
-      <h1>Hi, <span class="purple--text">{{artistName}}</span></h1>
-      <AddSong :connected="connected" :address="address" :artistName="artistName"/>
-    </v-row>
-    
-  </v-container>
+          <br>
+            <v-text-field
+              v-model="name"
+              :counter="15"
+              :rules="nameRules"
+              label="Name"
+              required
+              solo
+            ></v-text-field>
+  
+            <v-btn
+              v-if="connected"
+              :disabled="!valid"
+              color="success"
+              class="mr-4"
+              @click="validate"
+            >
+              Validate
+            </v-btn>
+  
+            <v-btn
+              color="error"
+              class="mr-4"
+              @click="reset"
+            >
+              Reset Form
+            </v-btn>
+  
+            <v-btn
+              color="warning"
+              @click="resetValidation"
+            >
+              Reset Validation
+            </v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-parallax>  
 </template>
-
-<script>
-const Web3 = require('web3');
-const MusiChain = require('../../build/contracts/MusiChain.json');
-import AddSong from '../components/AddSong.vue';
-
-export default {
-
-    data: () => ({
-      valid: true,
-      name: '',
-      nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 15) || 'Name must be less than 15 characters',
-      ],
-    }),
-    components: {
-      AddSong
-    },
-    props: {
-      connected: Boolean,
-      address: String,
-      artistName: String
-    },
-
-    methods: {
-      validate () {
-        this.$refs.form.validate();
-        const init = async () => {
-        const web3 = new Web3(window.ethereum);
-        const id = await web3.eth.net.getId();
-        const deployedNetwork = MusiChain.networks[id];
-        const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
-
-        contractMusiChain.methods.addArtist(this.name).send({from: this.address})
-        .then(receipt => {
-            this.$emit("changeArtistName", this.name);
-            console.log(receipt);
-        }).catch(error => {
-            console.log(error.message);
-        });
-      }
-
-      init();
+  
+  <script>
+  
+  
+    export default {
+      theme: { dark: true },
+      data: () => ({
+        valid: true,
+        name: '',
+        nameRules: [
+          v => !!v || 'Name is required',
+          v => (v && v.length <= 15) || 'Name must be less than 15 characters',
+        ],
+      }),
+  
+      props: {
+        connected: Boolean
       },
-
-      changeName() {
-      
+  
+      methods: {
+        validate () {
+          this.$refs.form.validate()
+        },
+        reset () {
+          this.$refs.form.reset()
+        },
+        resetValidation () {
+          this.$refs.form.resetValidation()
+        },
       },
-
-      reset () {
-        this.$refs.form.reset()
-      },
-    },
-}
-</script>
+    }
+  </script>

@@ -2,8 +2,8 @@
   <div class="home">
     <v-parallax
     dark
-    height="630"
-    src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+    height="900"
+    src="https://wallpapersmug.com/download/1366x768/f5d72b/digital-art-horizon-mountains-forest-pinkish.jpg"
   >
     <v-row
       align="center"
@@ -11,19 +11,19 @@
     >
       <v-col
         class="text-center"
-        cols="12"
+        cols="10"
       >
         <h1 class="text-h4 font-weight-thin mb-4">
-          Welcome to Musichain
+          
         </h1>
         <v-img
-          :src="require('../assets/musichain.svg')"
+          :src="require('../assets/musichain2.svg')"
           class="my-3"
           contain
-          height="200"
+          height="170"
         />
         <h4 class="subheading">
-          Menage your songs in Blockchain!
+          Welcome to Musichain!
         </h4>
       </v-col>
     </v-row>
