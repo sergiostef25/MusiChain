@@ -39,8 +39,66 @@
               :counter="4"
               :rules="yearRules"
               label="Year"
+              type="number"
               required
             ></v-text-field>
+
+            <v-switch
+              v-model="setPricing"
+              label="Set song princing in ETH"
+            ></v-switch>
+
+            <v-row justify="center" v-if="setPricing">
+              <v-col align="center" cols="12" md="4">
+                <v-text-field
+                  v-model="pricing[0]"
+                  :counter="10"
+                  :rules="priceRules"
+                  label="Price for 1 day"
+                  type="number"
+                ></v-text-field>
+
+              </v-col>
+              <v-col align="center" cols="12" md="4">
+                <v-text-field
+                  v-model="pricing[1]"
+                  :counter="10"
+                  :rules="priceRules"
+                  label="Price for 3 days"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+              <v-col align="center" cols="12" md="4">
+                <v-text-field
+                  v-model="pricing[2]"
+                  :counter="10"
+                  :rules="priceRules"
+                  label="Price for 1 week"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center" v-if="setPricing">
+              <v-col align="center" cols="12" md="6">
+                <v-text-field
+                  v-model="pricing[3]"
+                  :counter="10"
+                  :rules="priceRules"
+                  label="Price for 1 month"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+              <v-col align="center" cols="12" md="6">
+                <v-text-field
+                  v-model="pricing[4]"
+                  :counter="10"
+                  :rules="priceRules"
+                  label="Price for 1 year"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+            </v-row>
 
             <v-file-input
             @change="previewSong"
@@ -104,7 +162,7 @@
             max-width="500"
             :src=songCoverLink
           ></v-img>
-          <vuetify-audio :file="songFileLink" color="success" :ended="audioFinish"></vuetify-audio>
+          <vuetify-audio :file="songFileLink" color="success"></vuetify-audio>
         </v-col>
       </v-row>
     </v-container>
@@ -112,7 +170,7 @@
   
 <script>
 import { storage } from "@/firebase";
-import { ref, uploadBytes} from "firebase/storage"; 
+import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage"; 
 const Web3 = require('web3');
 const MusiChain = require('../../build/contracts/MusiChain.json');
 
@@ -122,6 +180,9 @@ export default {
         VuetifyAudio: () => import('vuetify-audio'),
       },
       data: () => ({
+        audioFinish: ' ',
+        setPricing: false,
+        pricing: [0.001,0.0025,0.006,0.02,0.2],
         songName: null,
         genre: null,
         album: null,
@@ -150,6 +211,10 @@ export default {
         genreRules: [
           v => !!v || 'Genre of song is required',  
         ],
+        priceRules: [
+          v => !!v || 'Album of song is required',
+          v => (v && v.length <= 10) || 'Price must be less than 10 digits',
+        ],
 
       }),
   
@@ -163,7 +228,7 @@ export default {
       methods: {
         validate () {
             this.$refs.form.validate();
-            this.submitSong();
+            this.uploadSongAndCover();
             
         },
 
@@ -180,76 +245,142 @@ export default {
 
         },
 
-        submitSong(){
+        submitSong(file_url, cover_url){
+          const urls = [file_url, cover_url];
+          console.log(urls[0]);
+          console.log(urls[1]);
           const init = async () => {
-            const web3 = new Web3(window.ethereum);
-            const id = await web3.eth.net.getId();
-            const deployedNetwork = MusiChain.networks[id];
-            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
-            
-            contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year).send({from: this.address, gas: 300000})
-            .then(receipt => {
-                console.log('CANZONE AGGIUNTA');
-                console.log(receipt);
-                this.uploadSongAndCover();
-            }).catch(error => {
-                this.alert_fail=true;
-                setTimeout(()=>{
-                  this.alert_fail=false;
-                  this.$refs.form.reset();
-                  this.songCoverLink = null;
-                  this.songFileLink = null;
-                  },3000);
-                
-                console.log('CANZONE NON AGGIUNTA'+error.message);
-            });
-          }
+                const web3 = new Web3('http://localhost:7545');
+                const id = await web3.eth.net.getId();
+                const deployedNetwork = MusiChain.networks[id];
+                const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
 
-          init();
+                this.pricing.forEach(toWei);
+
+                function toWei(item, index, arr) {
+                    arr[index] = web3.utils.toWei(item.toString());
+                  }
+                contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year, this.pricing, urls).send({from: this.address, gas: 700000})
+                .then(receipt => {
+                    console.log(receipt);
+                    this.alert_succ = true;
+                    setTimeout(()=>{
+                      this.alert_succ = false;
+                      this.$refs.form.reset();
+                      this.songCoverLink = null;
+                      this.songFileLink = null;
+                      URL.revokeObjectURL(this.songCoverLink);
+                      URL.revokeObjectURL(this.songFileLink);
+                    },3000);
+                    
+                    
+                }).catch(error => {
+                    console.log(error.message);
+                    this.alert_fail = true;
+                    setTimeout(()=>{
+                      this.alert_fail = false;
+                      this.$refs.form.reset();
+                      this.songCoverLink = null;
+                      this.songFileLink = null;
+                      URL.revokeObjectURL(this.songCoverLink);
+                      URL.revokeObjectURL(this.songFileLink);
+                    },3000);
+                    
+                });
+            }
+
+            init();
+          
         },
 
+
+
+        uploadSong(file, cover){
+          var metadata = {contentType: 'audio/mpeg',};
+          const storageRef = ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3');
+          const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+          uploadTask.on('state_changed', 
+                    (snapshot) => {
+                      // Observe state change events such as progress, pause, and resume
+                      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      console.log('Upload is ' + progress + '% done');
+                      switch (snapshot.state) {
+                        case 'paused':
+                          console.log('Upload is paused');
+                          break;
+                        case 'running':
+                          console.log('Upload is running');
+                          break;
+                      }
+                    }, 
+                    (error) => {
+                      // Handle unsuccessful uploads
+                      console.log(error);
+                    }, 
+                    () => {
+                      // Handle successful uploads on complete
+                      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        this.uploadCover(cover, downloadURL);
+                        //var cover_url =  this.uploadCover(reader2);
+                      });
+                      
+                    }
+                  );
+                
+        },
+
+        uploadCover(cover, file_url){
+          var metadata = {contentType: 'audio/mpeg',};
+          const storageRef = ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'_cover.jpg');
+          const uploadTask = uploadBytesResumable(storageRef, cover, metadata);
+          uploadTask.on('state_changed', 
+                    (snapshot) => {
+                      // Observe state change events such as progress, pause, and resume
+                      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      console.log('Upload is ' + progress + '% done');
+                      switch (snapshot.state) {
+                        case 'paused':
+                          console.log('Upload is paused');
+                          break;
+                        case 'running':
+                          console.log('Upload is running');
+                          break;
+                      }
+                    }, 
+                    (error) => {
+                      // Handle unsuccessful uploads
+                      console.log(error);
+                    }, 
+                    () => {
+                      // Handle successful uploads on complete
+                      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('Cover available at', downloadURL);
+                        this.submitSong(file_url, downloadURL);
+                      });
+                    }
+                  );
+        },
         uploadSongAndCover(){
+            /* var file_url = '';
+            var cover_url = '';  */
+
             var reader = new FileReader();
             var reader2 = new FileReader();
+
+            reader.onloadend = () => {
+              console.log("FILE "+reader.result);
+              console.log("COVER "+reader2.result);
+              this.uploadSong(reader.result, reader2.result);  
+            }
+
             reader.readAsArrayBuffer(this.songFile);
             reader2.readAsArrayBuffer(this.songCover);
-            reader.onload = () => {
-              console.log(reader.result);
-              var metadata = {
-                    contentType: 'audio/mpeg',
-                    };
-              
-              uploadBytes(ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3'), reader.result, metadata).then((snapshot) => {
-                          console.log(snapshot);
-                      });
-            }
-
-            reader2.onload = () => {
-                this.alert_succ=true;
-              
-              console.log(reader2.result);
-              var metadata = {
-                    contentType: 'image/jpg',
-                    };
-              
-              uploadBytes(ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.album.toLowerCase().replace(/\s/g, "")+'_cover.jpg'), reader2.result, metadata).then((snapshot) => {
-                          console.log(snapshot);
-                          setTimeout(()=>{
-                            this.alert_succ=false;
-                            this.$refs.form.reset();
-                            URL.revokeObjectURL(this.songCoverLink);
-                            URL.revokeObjectURL(this.songFileLink);
-                            this.songFileLink = null;
-                            this.songCoverLink = null;
-                          },3000);
-                         
-
-                          
-                      });
-              
-              
-            }
-        }
+          }
       },
     }
 </script>

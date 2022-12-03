@@ -7,7 +7,7 @@ const init = async () => {
     const deployedNetwork = MusiChain.networks[id];
     const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
 
-    contractMusiChain.methods.songs('Calcutta','Pesto').call()
+    contractMusiChain.methods.songs('Calcutta','Del Verde').call()
     .then(receipt => {
         console.log(receipt);
     }).catch(error => {
