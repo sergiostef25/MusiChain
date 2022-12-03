@@ -63,15 +63,15 @@
                   </v-btn>
                 </v-card-actions>
               </div>
-              <!--
+              
               <v-avatar
                 class="ma-3"
                 size="125"
                 tile
               >
-                <v-img :src="item.src"></v-img>
+                <v-img :src="song.cover"></v-img>
               </v-avatar>
-              -->
+              
             </div>
           </v-card>
         </v-col>
@@ -120,7 +120,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
             this.songs = [];
             for (let [key, value] of Object.entries(result)) {
                 let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-                this.songs.push({title:value.returnValues[2],artist:value.returnValues[3],color: randcolor});
+                this.songs.push({title:value.returnValues[2],artist:value.returnValues[3],color: randcolor, cover: value.returnValues[7]});
                 console.log(value.returnValues[2]);
                 console.log(key)
             }

@@ -9,15 +9,11 @@ contract MusiChain {
 
     struct Song{
         address payable songOwner; //l'indirizzo dell'artista
-        string genre;
         string album;
+        string genre;
         uint year;
-        uint purchasingCost;
-        uint rent_oneday;
-        uint rent_threedays;
-        uint rent_oneweek;
-        uint rent_onemonth;
-        uint rent_oneyear;
+        uint[] pricing;
+        string[] links;
     }
     
     uint private idArtist; // id assegnato progressivamente ad ogni artista inserito in MusiChain
@@ -28,25 +24,14 @@ contract MusiChain {
         idArtist = 1;
     }
 
-    event purchased(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase); //evento che verrà richiamato ad ogni acquisto di una canzone. Avremo quindi la lista di tutti gli acquisti
     event rented(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase, uint expirationTime);
     event artistAdded(address user, uint indexed idArtist, string artistName, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
-    event songAdded(address user, uint indexed idArtist ,string songName, string artistName, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di una nuova canzone
+    event songAdded(address user, uint indexed idArtist ,string songName, string artistName, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
 
     modifier costs(string memory artistName, string memory songName, uint option){ // modificatore per il controllo della quantità di ether per procedere all'acquisto della canzone
         uint amount;
-        if(option == 0){
-            amount = songs[artistName][songName].purchasingCost;
-        }else if(option == 1){
-            amount = songs[artistName][songName].rent_oneday;
-        }else if(option == 2){
-            amount = songs[artistName][songName].rent_threedays;
-        }else if(option == 3){
-            amount = songs[artistName][songName].rent_oneweek;
-        }else if(option == 4){
-            amount = songs[artistName][songName].rent_onemonth;
-        }else if(option == 5){
-            amount = songs[artistName][songName].rent_oneyear;
+        if(option <=4){
+            amount = songs[artistName][songName].pricing[option];
         }else{
             amount = 0;
         }
@@ -60,6 +45,7 @@ contract MusiChain {
         _;
     }
 
+
     function addArtist(string memory artistName) external notOwner{
         require(artistsCheck[artistName] == 0,"Artists already exists"); //controllo che l'artista non sia già stato inserito precedentemente
         require(bytes(artists[msg.sender]).length == 0 ,"You are already an artist"); // controllo che l'account che usa questa funzione non sia già un artista
@@ -69,19 +55,13 @@ contract MusiChain {
         idArtist++;
     }
     
-    function addSong(string memory songName, string memory genre, string memory album, uint year) external notOwner{
+    function addSong(string memory songName, string memory album, string memory genre, uint year, uint[] memory pricing, string[] memory links) external notOwner{
         require(bytes(artists[msg.sender]).length > 0 ,"You are not an artists"); // controllo che chi utilizzi questa funzione sia un artista
         require((songs[artists[msg.sender]][songName].year == 0),"Already present"); // controllo che la canzone non sia già inserita
-        uint purchasingCost = 2000000000000000 wei; // 2,3 euro
-        uint rent_oneday = 1000000000000000 wei; // 1,15 euro
-        uint rent_threedays = 2500000000000000 wei; //2,87 euro
-        uint rent_oneweek = 6000000000000000 wei; //6,89 euro
-        uint rent_onemonth = 20000000000000000 wei; //22,98 euro
-        uint rent_oneyear = 200000000000000000 wei; //229,75 euro
-        songs[artists[msg.sender]][songName] = Song(payable(msg.sender), genre, album, year, purchasingCost, rent_oneday, rent_threedays,rent_oneweek,rent_onemonth,rent_oneyear); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
-        //songs[artists[msg.sender]][songName] = Song(payable(msg.sender), genre, album, year, length, purchasingCost, rent_oneday, rent_threedays,rent_oneweek,rent_onemonth,rent_oneyear); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
         string memory artistName = artists[msg.sender];
-        emit songAdded(msg.sender, artistsCheck[artistName], songName, artistName, block.timestamp);
+        songs[artistName][songName] = Song(payable(msg.sender), genre, album, year, pricing, links); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
+
+        emit songAdded(msg.sender, artistsCheck[artistName], songName, artistName, block.timestamp, pricing, links[0], links[1]);
     }
 
     function buySong(string memory artistName, string memory songName, uint amountArtist, uint amountMusiChain, uint option) external payable costs(artistName, songName, option) notOwner{ 
@@ -91,14 +71,12 @@ contract MusiChain {
         (bool sentMusiChian,) = owner.call{value: (amountMusiChain)}(""); // invio degli ethers all'acount del proprietario di MusiChain
         require(sentArtist && sentMusiChian,"Fail to send Ether"); // controllo che le operazioni siano andate a buon fine
         if(option == 0){
-            emit purchased(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp);
-        }else if(option == 1){
             emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + 1 days);
-        }else if(option == 2){
+        }else if(option == 1){
             emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (3*1 days));
-        }else if(option == 3){
+        }else if(option == 2){
             emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + 1 weeks);
-        }else if(option == 4){
+        }else if(option == 3){
             emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (31*1 days));
         }else{
             emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (365*1 days));

@@ -13,7 +13,7 @@ const init = async () => {
     const result = await contractMusiChain.getPastEvents('songAdded', {filter: {idArtist: idArt},fromBlock: 0});
     
     for (let [key, value] of Object.entries(result)) {
-    console.log(value.returnValues[2]);
+    console.log(value.returnValues);
     }
 
     
