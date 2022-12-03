@@ -15,6 +15,7 @@
             :rules="nameRules"
             label="Name"
             required
+            solo
           ></v-text-field>
 
           <v-btn
@@ -28,7 +29,7 @@
           </v-btn>
 
           <v-btn
-            color="error"
+            color="#A52A2A"
             class="mr-4"
             @click="reset"
           >

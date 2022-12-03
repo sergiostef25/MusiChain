@@ -1,10 +1,5 @@
 <template>
   <div class="home">
-    <v-parallax
-    dark
-    height="900"
-    src="https://wallpapersmug.com/download/1366x768/f5d72b/digital-art-horizon-mountains-forest-pinkish.jpg"
-  >
     <v-row
       align="center"
       justify="center"
@@ -26,12 +21,53 @@
           Welcome to Musichain!
         </h4>
       </v-col>
-    </v-row>
-  </v-parallax>
 
+      
+    </v-row>
+
+    <br>
+    <br>
+    <br>
+
+    <v-carousel
+    cycle
+    height="500"
+    hide-delimiter-background
+    show-arrows-on-hover
+  >
+    <v-carousel-item
+      v-for="(slide, i) in slides"
+      :key="i"
+    >
+      <v-sheet
+        :color="colors[i]"
+        height="100%"
+      >
+        <v-row
+          class="fill-height"
+          align="center"
+          justify="center"
+        >
+          <div class="text-h2">
+            {{ slide }} 
+          </div>
+        </v-row>
+      </v-sheet>
+    </v-carousel-item>
+  </v-carousel>
     
   </div>
+  
 </template>
+
+
+<style>
+#app {
+  background: url('https://wallpapers.com/images/hd/purple-ombre-polygon-abstract-4bu0liuxf9z3s7q2.jpg')
+    no-repeat center center fixed !important;
+  background-size: cover;
+}
+</style>
 
 <script>
 //const Web3 = require('web3');
@@ -44,6 +80,20 @@
       return {
         contractResult: '',
         owner: '',
+        colors: [
+          'indigo',
+          'warning',
+          'pink darken-2',
+          'red lighten-1',
+          'deep-purple accent-4',
+        ],
+        slides: [
+          'Scopri le nostre funzioni',
+          'Puoi acquistare canzoni',
+          'Caricarle in Blockchain',
+          'Transizione immediata e sicura',
+          'Queste scritte sono indicative, tranquillo amo',
+        ],
       }
     },
 
