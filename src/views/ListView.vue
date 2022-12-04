@@ -17,7 +17,7 @@
 
         <v-btn
             :disabled="!valid"
-            color="success"
+            color="#006400"
             class="mr-4"
             @click="validate"
           >
@@ -25,7 +25,7 @@
         </v-btn>
 
         <v-btn
-            color="error"
+            color="#A52A2A"
             class="mr-4"
             @click="reset"
           >
