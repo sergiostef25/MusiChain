@@ -15,11 +15,16 @@
           :src="require('../assets/musichain2.svg')"
           class="my-3"
           contain
-          height="170"
+          height="130"
         />
         <h4 class="subheading">
-          Welcome to Musichain!
+          MusiChain
         </h4>
+        <br>
+        <br>
+        <br>
+        
+
       </v-col>
 
       
@@ -28,20 +33,24 @@
     <br>
     <br>
     <br>
+    
+    
 
-    <v-carousel
-    cycle
-    height="500"
-    hide-delimiter-background
-    show-arrows-on-hover
-  >
-    <v-carousel-item
-      v-for="(slide, i) in slides"
-      :key="i"
+  <template>
+    <v-card
+    elevation="24"
+    max-width="900"
+    class="mx-auto"
     >
-      <v-sheet
-        :color="colors[i]"
-        height="100%"
+    <v-carousel
+      cycle
+      height="600"
+      show-arrows-on-hover
+    >
+      <v-carousel-item
+        v-for="(item,i) in items"
+        :key="i"
+        :src="item.src"        
       >
         <v-row
           class="fill-height"
@@ -49,15 +58,59 @@
           justify="center"
         >
           <div class="text-h2">
-            {{ slide }} 
+            <h5> {{ slides[i] }} </h5>  
           </div>
         </v-row>
-      </v-sheet>
-    </v-carousel-item>
-  </v-carousel>
+      </v-carousel-item>
+    </v-carousel>
+    </v-card>
+  </template>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+  <template>
+    <v-footer
+    dark
+    padless
+    >
+      <v-card
+      flat
+      tile
+      class="blue-grey darken-4 white--text text-center"
+      >
+      <v-card-text>
+        <v-btn
+          v-for="icon in icons"
+          :key="icon"
+          class="mx-4 white--text"
+          icon
+        >
+          <v-icon size="24px">
+            {{ icon }}
+          </v-icon>
+        </v-btn>
+      </v-card-text>
+
+      <v-card-text class="white--text pt-0">
+        Sync, update to new versions of Musichain, purchases on the Store: if you need assistance, just ask. Our team will make every transaction secure and immediate to ensure a management of your data as safe as possible. For other references, consult our social.
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-text class="white--text">
+        {{ new Date().getFullYear() }} — <strong>Musichain</strong>
+      </v-card-text>
+      </v-card>
+    </v-footer>
+  </template>
+
     
   </div>
-  
 </template>
 
 
@@ -80,20 +133,34 @@
       return {
         contractResult: '',
         owner: '',
-        colors: [
-          'indigo',
-          'warning',
-          'pink darken-2',
-          'red lighten-1',
-          'deep-purple accent-4',
+        items: [
+          {
+            src: 'https://res.allmacwallpaper.com/get/Retina-MacBook-Air-13-inch-wallpapers/flint-blur-5k-2560x1600/21531-11.jpg',
+          },
+          {
+            src: 'https://consequence.net/wp-content/uploads/2022/01/CoS-HERO_Upcoming_1200x675.jpg?quality=80&w=1031&h=580&crop=1&resize=1031%2C580&strip',
+          },
+          {
+            src: 'https://i.pinimg.com/originals/22/17/7c/22177c78433b7146788d7a4c6122f6c5.jpg',
+          },
+          {
+            src: 'https://corporate.payu.com/wp-content/uploads/2022/04/Safety-security-banner-header-1440x465.webp',
+          },
         ],
+        
         slides: [
-          'Scopri le nostre funzioni',
-          'Puoi acquistare canzoni',
-          'Caricarle in Blockchain',
-          'Transizione immediata e sicura',
-          'Queste scritte sono indicative, tranquillo amo',
+          'Discover our features',
+          'Rent songs of your favorite artists',
+          'Upload your songs in Blockchain',
+          'Safe and immediate transactions',
         ],
+
+        icons: [
+        'mdi-facebook',
+        'mdi-twitter',
+        'mdi-linkedin',
+        'mdi-instagram',
+      ],
       }
     },
 

@@ -1,6 +1,7 @@
 <template>
     <v-container>
         <h1 align="center">Search for an artist's song catalog</h1>
+        <br>
         <v-form
           ref="form"
           v-model="valid"

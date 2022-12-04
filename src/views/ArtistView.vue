@@ -1,7 +1,9 @@
 <template>
    
   <v-container>
-    <h1 v-if="(!connected || artistName == 'none')" align="center">Subscribe as an artist</h1>
+    <h1 v-if="(!connected || artistName == 'none')" align="center">Subscribe as artist</h1>
+    <br>
+    
     <v-row v-if="(!connected || artistName == 'none')" justify="center">
       <v-col align="center" cols="12" md="6">
         <v-form
