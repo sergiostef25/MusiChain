@@ -1,6 +1,9 @@
 <template>
         
     <v-container>
+        <h1 align="center">Music Player</h1>
+        <br>
+        <br>
         <v-row justify="center">
             <v-col align="center" cols="12" md="8">
                 <v-file-input
