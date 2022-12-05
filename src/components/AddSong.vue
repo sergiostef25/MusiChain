@@ -52,7 +52,6 @@
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[0]"
-                  :rules="priceRules"
                   label="Price for 1 day"
                   type="number"
                   step="0.001"
@@ -63,7 +62,6 @@
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[1]"
-                  :rules="priceRules"
                   label="Price for 3 days"
                   type="number"
                   step="0.001"
@@ -73,7 +71,6 @@
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[2]"
-                  :rules="priceRules"
                   label="Price for 1 week"
                   type="number"
                   step="0.001"
@@ -86,7 +83,6 @@
               <v-col align="center" cols="12" md="6">
                 <v-text-field
                   v-model="pricing[3]"
-                  :rules="priceRules"
                   label="Price for 1 month"
                   type="number"
                   step="0.001"
@@ -96,7 +92,6 @@
               <v-col align="center" cols="12" md="6">
                 <v-text-field
                   v-model="pricing[4]"
-                  :rules="priceRules"
                   label="Price for 1 year"
                   type="number"
                   step="0.001"
@@ -216,10 +211,10 @@ export default {
         genreRules: [
           v => !!v || 'Genre of song is required',  
         ],
-        priceRules: [
+/*         priceRules: [
           v => !!v || 'Album of song is required',
           v => (v && v.length <= 6) || 'Price must be less than 5 digits',
-        ],
+        ], */
 
       }),
   
@@ -239,6 +234,7 @@ export default {
 
         reset () {
           this.$refs.form.reset();
+          this.pricing = [0.001,0.0025,0.006,0.02,0.2];
           URL.revokeObjectURL(this.songCoverLink);
           URL.revokeObjectURL(this.songFileLink);
           this.songCoverLink = null;
@@ -269,7 +265,7 @@ export default {
                   new_pricing.push(web3.utils.toWei(item.toString()));
                 }
                 console.log(new_pricing);
-                this.pricing = [0.001,0.0025,0.006,0.02,0.2];
+                console.log(this.pricing);
                 if(new_pricing.length != 0){
                   contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year, new_pricing, urls).send({from: this.address, gas: 700000})
                   .then(receipt => {
@@ -278,6 +274,7 @@ export default {
                       setTimeout(()=>{
                         this.alert_succ = false;
                         this.$refs.form.reset();
+                        this.pricing = [0.001,0.0025,0.006,0.02,0.2];
                         URL.revokeObjectURL(this.songCoverLink);
                         URL.revokeObjectURL(this.songFileLink);
                         this.songCoverLink = null;
@@ -291,6 +288,7 @@ export default {
                       setTimeout(()=>{
                         this.alert_fail = false;
                         this.$refs.form.reset();
+                        this.pricing = [0.001,0.0025,0.006,0.02,0.2];
                         URL.revokeObjectURL(this.songCoverLink);
                         URL.revokeObjectURL(this.songFileLink);
                         this.songCoverLink = null;
