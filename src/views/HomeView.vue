@@ -138,7 +138,7 @@
             src: 'https://res.allmacwallpaper.com/get/Retina-MacBook-Air-13-inch-wallpapers/flint-blur-5k-2560x1600/21531-11.jpg',
           },
           {
-            src: 'https://consequence.net/wp-content/uploads/2022/01/CoS-HERO_Upcoming_1200x675.jpg?quality=80&w=1031&h=580&crop=1&resize=1031%2C580&strip',
+            src: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
           },
           {
             src: 'https://i.pinimg.com/originals/22/17/7c/22177c78433b7146788d7a4c6122f6c5.jpg',

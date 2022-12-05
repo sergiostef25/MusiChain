@@ -230,7 +230,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         },
 
         downloadSong(){
-          const songRef = ref(storage, this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'_enc.mp3');
+          const songRef = ref(storage, this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3');
 
           getBytes(songRef).then((bytes) =>{
                     console.log('Canzone scaricata' + bytes);
