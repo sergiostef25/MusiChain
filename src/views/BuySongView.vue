@@ -145,28 +145,48 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         },
 
         displayAmount(){
-          switch(this.rentPeriod){
-              case '1 day':
-                this.amount = 0.001;
-                this.rentPeriodNumeric = 1;
-              break;
-              case '3 days':
-                this.amount = 0.0025;
-                this.rentPeriodNumeric = 2;
-              break;
-              case '1 week':
-                this.amount = 0.006;
-                this.rentPeriodNumeric = 3;
-              break;
-              case '1 month':
-                this.amount = 0.02;
-                this.rentPeriodNumeric = 4;
-              break;
-              case '1 year':
-                this.amount = 0.2;
-                this.rentPeriodNumeric = 5;
-              break;
+          const init = async () => {
+            const web3 = new Web3(window.ethereum);
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            const idArt = await contractMusiChain.methods.artistsCheck(this.artist).call();
+            const result = await contractMusiChain.getPastEvents('songAdded', {filter: {idArtist: idArt},fromBlock: 0});
+            
+            for (let [, value] of Object.entries(result)) {
+              if(value.returnValues[2] == this.songName){
+                switch(this.rentPeriod){
+                  case '1 day':
+                    this.amount = web3.utils.fromWei(value.returnValues[5][0]);
+                    this.rentPeriodNumeric = 1;
+                  break;
+                  case '3 days':
+                    this.amount = web3.utils.fromWei(value.returnValues[5][1]);
+                    this.rentPeriodNumeric = 2;
+                  break;
+                  case '1 week':
+                    this.amount = web3.utils.fromWei(value.returnValues[5][2]);
+                    this.rentPeriodNumeric = 3;
+                  break;
+                  case '1 month':
+                    this.amount = web3.utils.fromWei(value.returnValues[5][3]);
+                    this.rentPeriodNumeric = 4;
+                  break;
+                  case '1 year':
+                    this.amount = web3.utils.fromWei(value.returnValues[5][4]);
+                    this.rentPeriodNumeric = 5;
+                  break;
+                }
+
+              }
+                console.log(value.returnValues[5]);
+
             }
+
+          }
+
+          init();
+
         },
 
         rentSong(){
