@@ -23800,12 +23800,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xFFd0878531a512b1C5312999eEb45029139342d0",
-      "transactionHash": "0x807215e8cb5c7618c2f4b87b3ed05ecfef076a89b7f3c158010ea6825c010be7"
+      "address": "0x339dd231CcA6A8d707597F693309E9A312f39bBf",
+      "transactionHash": "0x91bcb19b1ba0babdc26d9c55fed9399fd19ba8b69022cc1a138437d4ce9b5b81"
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-12-03T15:59:05.328Z",
+  "updatedAt": "2022-12-05T08:51:23.539Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

@@ -52,29 +52,32 @@
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[0]"
-                  :counter="10"
                   :rules="priceRules"
                   label="Price for 1 day"
                   type="number"
+                  step="0.001"
+                  max="2"
                 ></v-text-field>
 
               </v-col>
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[1]"
-                  :counter="10"
                   :rules="priceRules"
                   label="Price for 3 days"
                   type="number"
+                  step="0.001"
+                  max="2"
                 ></v-text-field>
               </v-col>
               <v-col align="center" cols="12" md="4">
                 <v-text-field
                   v-model="pricing[2]"
-                  :counter="10"
                   :rules="priceRules"
                   label="Price for 1 week"
                   type="number"
+                  step="0.001"
+                  max="2"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -83,19 +86,21 @@
               <v-col align="center" cols="12" md="6">
                 <v-text-field
                   v-model="pricing[3]"
-                  :counter="10"
                   :rules="priceRules"
                   label="Price for 1 month"
                   type="number"
+                  step="0.001"
+                  max="2"
                 ></v-text-field>
               </v-col>
               <v-col align="center" cols="12" md="6">
                 <v-text-field
                   v-model="pricing[4]"
-                  :counter="10"
                   :rules="priceRules"
                   label="Price for 1 year"
                   type="number"
+                  step="0.001"
+                  max="2"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -213,7 +218,7 @@ export default {
         ],
         priceRules: [
           v => !!v || 'Album of song is required',
-          v => (v && v.length <= 10) || 'Price must be less than 10 digits',
+          v => (v && v.length <= 6) || 'Price must be less than 5 digits',
         ],
 
       }),
@@ -233,7 +238,11 @@ export default {
         },
 
         reset () {
-          this.$refs.form.reset()
+          this.$refs.form.reset();
+          URL.revokeObjectURL(this.songCoverLink);
+          URL.revokeObjectURL(this.songFileLink);
+          this.songCoverLink = null;
+          this.songFileLink = null;
         },
 
         previewCover () {
@@ -254,39 +263,52 @@ export default {
                 const id = await web3.eth.net.getId();
                 const deployedNetwork = MusiChain.networks[id];
                 const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
-
-                this.pricing.forEach(toWei);
-
-                function toWei(item, index, arr) {
-                    arr[index] = web3.utils.toWei(item.toString());
-                  }
-                contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year, this.pricing, urls).send({from: this.address, gas: 700000})
-                .then(receipt => {
-                    console.log(receipt);
-                    this.alert_succ = true;
-                    setTimeout(()=>{
-                      this.alert_succ = false;
-                      this.$refs.form.reset();
-                      this.songCoverLink = null;
-                      this.songFileLink = null;
-                      URL.revokeObjectURL(this.songCoverLink);
-                      URL.revokeObjectURL(this.songFileLink);
-                    },3000);
-                    
-                    
-                }).catch(error => {
-                    console.log(error.message);
-                    this.alert_fail = true;
-                    setTimeout(()=>{
-                      this.alert_fail = false;
-                      this.$refs.form.reset();
-                      this.songCoverLink = null;
-                      this.songFileLink = null;
-                      URL.revokeObjectURL(this.songCoverLink);
-                      URL.revokeObjectURL(this.songFileLink);
-                    },3000);
-                    
-                });
+                var new_pricing = [];
+                this.pricing.forEach(toWei)
+                function toWei(item) {
+                  new_pricing.push(web3.utils.toWei(item.toString()));
+                }
+                console.log(new_pricing);
+                this.pricing = [0.001,0.0025,0.006,0.02,0.2];
+                if(new_pricing.length != 0){
+                  contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year, new_pricing, urls).send({from: this.address, gas: 700000})
+                  .then(receipt => {
+                      console.log(receipt);
+                      this.alert_succ = true;
+                      setTimeout(()=>{
+                        this.alert_succ = false;
+                        this.$refs.form.reset();
+                        URL.revokeObjectURL(this.songCoverLink);
+                        URL.revokeObjectURL(this.songFileLink);
+                        this.songCoverLink = null;
+                        this.songFileLink = null;
+                      },3000);
+                      
+                      
+                  }).catch(error => {
+                      console.log(error.message);
+                      this.alert_fail = true;
+                      setTimeout(()=>{
+                        this.alert_fail = false;
+                        this.$refs.form.reset();
+                        URL.revokeObjectURL(this.songCoverLink);
+                        URL.revokeObjectURL(this.songFileLink);
+                        this.songCoverLink = null;
+                        this.songFileLink = null;
+                      },3000);
+                      
+                  });
+                }else{
+                  this.alert_fail = true;
+                      setTimeout(()=>{
+                        this.alert_fail = false;
+                        this.$refs.form.reset();
+                        URL.revokeObjectURL(this.songCoverLink);
+                        URL.revokeObjectURL(this.songFileLink);
+                        this.songCoverLink = null;
+                        this.songFileLink = null;
+                      },3000);
+                }
             }
 
             init();
