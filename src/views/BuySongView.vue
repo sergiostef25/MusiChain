@@ -20,6 +20,7 @@
               label="Artist Name"
               required
               solo
+              @change="(amount=0)"
             ></v-text-field>
             
             <v-text-field
@@ -29,6 +30,7 @@
               label="Song Name"
               required
               solo
+              @change="(amount=0)"
             ></v-text-field>
 
           
@@ -158,23 +160,23 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
                 switch(this.rentPeriod){
                   case '1 day':
                     this.amount = web3.utils.fromWei(value.returnValues[5][0]);
-                    this.rentPeriodNumeric = 1;
+                    this.rentPeriodNumeric = 0;
                   break;
                   case '3 days':
                     this.amount = web3.utils.fromWei(value.returnValues[5][1]);
-                    this.rentPeriodNumeric = 2;
+                    this.rentPeriodNumeric = 1;
                   break;
                   case '1 week':
                     this.amount = web3.utils.fromWei(value.returnValues[5][2]);
-                    this.rentPeriodNumeric = 3;
+                    this.rentPeriodNumeric = 2;
                   break;
                   case '1 month':
                     this.amount = web3.utils.fromWei(value.returnValues[5][3]);
-                    this.rentPeriodNumeric = 4;
+                    this.rentPeriodNumeric = 3;
                   break;
                   case '1 year':
                     this.amount = web3.utils.fromWei(value.returnValues[5][4]);
-                    this.rentPeriodNumeric = 5;
+                    this.rentPeriodNumeric = 4;
                   break;
                 }
 
@@ -228,7 +230,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         },
 
         downloadSong(){
-          const songRef = ref(storage, this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'.mp3');
+          const songRef = ref(storage, this.artist.toLowerCase().replace(/\s/g, "")+'_'+this.songName.toLowerCase().replace(/\s/g, "")+'_enc.mp3');
 
           getBytes(songRef).then((bytes) =>{
                     console.log('Canzone scaricata' + bytes);

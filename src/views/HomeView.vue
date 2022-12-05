@@ -151,7 +151,7 @@
         slides: [
           'Discover our features',
           'Rent songs of your favorite artists',
-          'Upload your songs in Blockchain',
+          'Upload your songs on the Blockchain',
           'Safe and immediate transactions',
         ],
 

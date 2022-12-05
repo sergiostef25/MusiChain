@@ -134,6 +134,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
 
         reset(){
             this.$refs.form.reset();
+            this.songs = [];
         }
   
     }

@@ -20,7 +20,7 @@
         </v-row>
             <v-row justidy="center">
                 <v-col align="center" cols="12" md="12">
-                    <vuetify-audio :file="file" color="success" :ended="audioFinish"></vuetify-audio>
+                    <vuetify-audio :file="file" color="success"></vuetify-audio>
                     <h1>{{data}}</h1>
                 </v-col>
                 
