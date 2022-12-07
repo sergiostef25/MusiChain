@@ -267,7 +267,7 @@ export default {
                 console.log(new_pricing);
                 console.log(this.pricing);
                 if(new_pricing.length != 0){
-                  contractMusiChain.methods.addSong(this.songName, this.genre, this.album, this.year, new_pricing, urls).send({from: this.address, gas: 700000})
+                  contractMusiChain.methods.addSong(this.songName, this.album, this.genre, this.year, new_pricing, urls).send({from: this.address, gas: 700000})
                   .then(receipt => {
                       console.log(receipt);
                       this.alert_succ = true;

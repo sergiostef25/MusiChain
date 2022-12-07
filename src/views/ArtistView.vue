@@ -85,6 +85,17 @@ export default {
         contractMusiChain.methods.addArtist(this.name).send({from: this.address})
         .then(receipt => {
             this.$emit("changeArtistName", this.name);
+            var new_artistsList = [];
+            const init = async () => {
+              const result = await contractMusiChain.getPastEvents('artistAdded', {fromBlock: 0});
+
+              for (let [, value] of Object.entries(result)) {
+                  
+                new_artistsList.push(value.returnValues[2]);
+              }
+            }
+            init();
+            this.$emit("addArtist", new_artistsList);
             console.log(receipt);
         }).catch(error => {
             console.log(error.message);
