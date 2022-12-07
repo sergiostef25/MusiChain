@@ -17,16 +17,17 @@ contract MusiChain {
     }
     
     uint private idArtist; // id assegnato progressivamente ad ogni artista inserito in MusiChain
-
+    uint private idSong;
 
     constructor(){
         owner = payable(msg.sender);
         idArtist = 1;
+        idSong = 1;
     }
 
     event rented(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase, uint expirationTime);
     event artistAdded(address user, uint indexed idArtist, string artistName, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
-    event songAdded(address user, uint indexed idArtist ,string songName, string artistName, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
+    event songAdded(address user, uint indexed idArtist, uint indexed idSong, string songName, string artistName, string album, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
 
     modifier costs(string memory artistName, string memory songName, uint option){ // modificatore per il controllo della quantità di ether per procedere all'acquisto della canzone
         uint amount;
@@ -61,7 +62,8 @@ contract MusiChain {
         string memory artistName = artists[msg.sender];
         songs[artistName][songName] = Song(payable(msg.sender), genre, album, year, pricing, links); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
 
-        emit songAdded(msg.sender, artistsCheck[artistName], songName, artistName, block.timestamp, pricing, links[0], links[1]);
+        emit songAdded(msg.sender, artistsCheck[artistName],idSong, songName, artistName, album, year, block.timestamp, pricing, links[0], links[1]);
+        idSong++;
     }
 
     function buySong(string memory artistName, string memory songName, uint amountArtist, uint amountMusiChain, uint option) external payable costs(artistName, songName, option) notOwner{ 

@@ -44,7 +44,13 @@
 
       <v-container fluid>
         <!-- If using vue-router -->
-        <router-view :connected="connected" :address="address" :artistName="artistName" @changeArtistName="artistName = $event"></router-view>
+        <router-view 
+          :connected="connected" 
+          :address="address" 
+          :artistName="artistName" 
+          @changeArtistName="artistName = $event" 
+          @addArtist="(artistsList = $event)">
+          </router-view>
 
       </v-container>
 
@@ -66,6 +72,7 @@ export default {
       return {
         address: null,
         artistName: 'none',
+        artistsList: [],
         connected: false,
         drawer: false,
         group: null,
@@ -74,11 +81,30 @@ export default {
           {icon: 'mdi-account-circle', text: 'Artist', route: '/artist'},
           {icon: 'mdi-cart-arrow-down', text: 'Buy Song', route: '/buy'},
           {icon: 'mdi-play', text: 'Music Player', route: '/player'},
-          {icon: 'mdi-playlist-music', text: 'List', route: '/list'},
         ]
       }
     },
+  
 
+  
+  mounted(){
+    const init = async () => {
+            const web3 = new Web3('http://localhost:7545');
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+
+            const result = await contractMusiChain.getPastEvents('artistAdded', {fromBlock: 0});
+
+            for (let [, value] of Object.entries(result)) {
+                
+                this.artistsList.push({id: value.returnValues[1],name : value.returnValues[2]});
+            }
+            
+          }
+
+          init();
+  },
   methods:{
       connect(){
 
@@ -101,7 +127,7 @@ export default {
           }
 
           init();
-          
+           
           })
         }
       },
