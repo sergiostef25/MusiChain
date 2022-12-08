@@ -9,11 +9,8 @@ contract MusiChain {
 
     struct Song{
         address payable songOwner; //l'indirizzo dell'artista
-        string album;
-        string genre;
-        uint year;
         uint[] pricing;
-        string[] links;
+        uint idSong;
     }
     
     uint private idArtist; // id assegnato progressivamente ad ogni artista inserito in MusiChain
@@ -27,7 +24,7 @@ contract MusiChain {
 
     event rented(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase, uint expirationTime);
     event artistAdded(address user, uint indexed idArtist, string artistName, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
-    event songAdded(address user, uint indexed idArtist, uint indexed idSong, string songName, string artistName, string album, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
+    event songAdded(address indexed user, uint indexed idArtist, uint indexed idSong, string songName, string artistName, string album, string genre, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
 
     modifier costs(string memory artistName, string memory songName, uint option){ // modificatore per il controllo della quantità di ether per procedere all'acquisto della canzone
         uint amount;
@@ -58,11 +55,11 @@ contract MusiChain {
     
     function addSong(string memory songName, string memory album, string memory genre, uint year, uint[] memory pricing, string[] memory links) external notOwner{
         require(bytes(artists[msg.sender]).length > 0 ,"You are not an artists"); // controllo che chi utilizzi questa funzione sia un artista
-        require((songs[artists[msg.sender]][songName].year == 0),"Already present"); // controllo che la canzone non sia già inserita
+        require((songs[artists[msg.sender]][songName].idSong == 0),"Already present"); // controllo che la canzone non sia già inserita
         string memory artistName = artists[msg.sender];
-        songs[artistName][songName] = Song(payable(msg.sender), genre, album, year, pricing, links); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
+        songs[artistName][songName] = Song(payable(msg.sender), pricing, idSong); //inserisco automaticamente il nome dell'artista, in quanto solo un artista è associato ad un determinato account
 
-        emit songAdded(msg.sender, artistsCheck[artistName],idSong, songName, artistName, album, year, block.timestamp, pricing, links[0], links[1]);
+        emit songAdded(msg.sender, artistsCheck[artistName],idSong, songName, artistName, album, genre, year, block.timestamp, pricing, links[0], links[1]);
         idSong++;
     }
 

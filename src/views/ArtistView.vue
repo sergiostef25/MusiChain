@@ -18,11 +18,12 @@
             label="Name"
             required
             solo
+            clearable
           ></v-text-field>
 
           <v-btn
             v-if="connected"
-            :disabled="!valid"
+            :disabled="!name"
             color="success"
             class="mr-4"
             @click="validate"
@@ -30,13 +31,6 @@
             Subscribe
           </v-btn>
 
-          <v-btn
-            color="#A52A2A"
-            class="mr-4"
-            @click="reset"
-          >
-            Cancel
-          </v-btn>
 
         </v-form>
       </v-col>
@@ -57,13 +51,14 @@ import AddSong from '../components/AddSong.vue';
 export default {
 
     data: () => ({
-      valid: true,
-      name: '',
+      valid: false,
+      name: null,
       nameRules: [
         v => !!v || 'Name is required',
         v => (v && v.length <= 15) || 'Name must be less than 15 characters',
       ],
     }),
+
     components: {
       AddSong
     },
