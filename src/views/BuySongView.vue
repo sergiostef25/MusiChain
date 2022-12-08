@@ -1,8 +1,4 @@
-<template>
- 
-    
-      
-        
+<template>  
         <v-container>
           <h1 align="center">Rent a Song</h1>
           <v-row justify="center">
@@ -17,6 +13,7 @@
                 solo
                 chips
                 clearable
+                hide-selected
                 :loading="isLoading"
                 :search-input.sync="search"
             >
@@ -43,7 +40,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-text="item.songName"></v-list-item-title>
-                <v-list-item-subtitle v-text="(item.album+' ('+item.year+') - '+item.artistName)"></v-list-item-subtitle>
+                <v-list-item-subtitle v-text="(item.album+' ('+item.year+') - '+item.artistName)+' ['+item.genre+']'"></v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-icon>mdi-music</v-icon>
@@ -51,7 +48,7 @@
             </template>
             </v-autocomplete>
 
-            <v-autocomplete
+            <v-select
               :disabled="(songId == null)"
               v-model="rentPeriod"
               :items="rentList"
@@ -60,8 +57,8 @@
               chips
               label="Rent period"
               clearable
-            ></v-autocomplete>
-
+              hide-selected
+            ></v-select>
 
             <v-btn
               v-if="connected"
@@ -98,19 +95,9 @@
           <vuetify-audio :file="songFileLink" color="success"></vuetify-audio>
         </v-col>
       </v-row>
-
-      
-
-      
     </v-container>
-    
-      
-     
- 
 </template>
 
-
-  
 <script>
 import { storage } from "@/firebase";
 import { ref, getBytes} from "firebase/storage";
@@ -123,7 +110,6 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
       VuetifyAudio: () => import('vuetify-audio'),
       },
       data: () => ({
-        /* file: null, */
         songList: [],
         isLoading: false,
         search: null,
@@ -138,9 +124,6 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         songCoverLink: null,
         songFileLink: null,
         rentList: ['1 day', '3 days', '1 week', '1 month', '1 year'],
-
-
-
       }),
       watch:{
 
@@ -186,7 +169,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
             
             for (let [, value] of Object.entries(result)) {
           
-                this.songList.push({idArtist:value.returnValues[1],id:value.returnValues[2],title:value.returnValues[3]+' - '+value.returnValues[5]+'('+value.returnValues[6]+'), '+value.returnValues[4],songName:value.returnValues[3], artistName:value.returnValues[4], album:value.returnValues[5], year:value.returnValues[6],pricing:value.returnValues[8],link_file:value.returnValues[9],link_cover:value.returnValues[10]});
+                this.songList.push({idArtist:value.returnValues[1],id:value.returnValues[2],title:value.returnValues[3]+' - '+value.returnValues[5]+'('+value.returnValues[7]+'), '+value.returnValues[4]+' ['+value.returnValues[6]+']',songName:value.returnValues[3], artistName:value.returnValues[4], album:value.returnValues[5], genre: value.returnValues[6],  year:value.returnValues[7],pricing:value.returnValues[9],link_file:value.returnValues[10],link_cover:value.returnValues[11]});
             }
             console.log(this.songList);
             this.isLoading = false;
