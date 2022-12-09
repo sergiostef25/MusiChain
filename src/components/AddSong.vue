@@ -1,9 +1,22 @@
 <template>
-        
+      
     <v-container>
-      <h1 align="center">Let's add a song!</h1>
-      <v-row justify="center">
-        <v-col align="center" cols="12" md="8">
+      
+      <v-row >
+        <v-col align="center" cols="12" md="3">
+          <v-img 
+            v-if="(artistAvatarLink)"
+            max-height="150"
+            max-width="150"
+            :src=artistAvatarLink
+            class="rounded-pill mb-10"
+          ></v-img>
+          <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span>
+          <br/>Let's add a song!</h2>
+          
+        </v-col>
+        
+        <v-col align="center" cols="12" md="6">
           <v-form
             ref="form"
             v-model="valid"
@@ -199,31 +212,55 @@
               Reset
             </v-btn>
           </v-col>
-            <v-col align="center" cols="12" md="5" v-if="(alert_succ || alert_fail)">
+            <!-- <v-col align="center" cols="12" md="5" v-if="(alert_succ || alert_fail)">
               <v-alert type="success" transition="fade-transition" :value="alert_succ">
                 Song successfully added
                 </v-alert>
                 <v-alert type="error" transition="fade-transition" :value="alert_fail">
                 Song not added beacause already present
               </v-alert>
-            </v-col>
+            </v-col> -->
           </v-row>
           </v-form>
-          <v-row justify="center">
-            
-          </v-row>
           
         </v-col>
-        <v-col align="center" cols="12" md="3" v-if="(songCoverLink || songFileLink)">
         
+        <v-col align="center" cols="12" md="3" v-if="(songCoverLink || songFileLink)">
           <v-img 
+            v-if="(songCoverLink || songFileLink)"
             max-height="500"
             max-width="500"
             :src=songCoverLink
           ></v-img>
-          <vuetify-audio :file="songFileLink" color="success"></vuetify-audio>
+          <vuetify-audio :file="songFileLink" color="success" v-if="(songCoverLink || songFileLink)"></vuetify-audio>
         </v-col>
       </v-row>
+      <v-snackbar :timeout="3000" v-model="alert_succ" color="success">
+        Song successfully added
+        <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="alert_succ = false"
+        >
+          Close
+        </v-btn>
+      </template>
+      </v-snackbar>
+      <v-snackbar :timeout="3000" v-model="alert_fail" color="error">
+        Song not added beacause already present
+        <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="alert_fail = false"
+        >
+          Close
+        </v-btn>
+      </template>
+      </v-snackbar>
     </v-container>
 </template>
   
@@ -255,9 +292,11 @@ export default {
         valid: false,
         isLoading: false,
         albumList: [],
+        albumListLength: 0,
         search: null,
         isLoading2: false,
         result: null,
+        artistAvatarLink: null,
         genre_list: ['Indie', 'Pop', 'Rock', 'Techno','Soul','Reggae','Country','Funk','Hip Hop','Jazz','Classical','Electronic','Blues','Vocal','Vaporwave','Traditional'],
         nameRules: [
           v => !!v || 'Name of song is required',
@@ -282,6 +321,23 @@ export default {
 
       }),
       
+      created(){
+        const init = async () => {
+          const web3 = new Web3(window.ethereum);
+          const id = await web3.eth.net.getId();
+          const deployedNetwork = MusiChain.networks[id];
+          const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+          
+          const artistId = await contractMusiChain.methods.artistsCheck(this.artistName).call();
+          const result = await contractMusiChain.getPastEvents('artistAdded', {filter: {idArtist: artistId},fromBlock: 0});
+          for (let [, value] of Object.entries(result)) {
+            this.artistAvatarLink = value.returnValues[3];
+          }
+        }
+
+        init();
+      },
+
       watch: {
         songFile(){
           if(this.songFile != null){
@@ -303,7 +359,8 @@ export default {
           
         },
         search(){
-          if (this.albumList.length > 0) return
+          
+          /* if(this.albumList.length > 0) return */
 
           this.isLoading2 = true;
 
@@ -318,7 +375,7 @@ export default {
               for (let [, value] of Object.entries(this.result)) {
                   this.albumList.push({album:value.returnValues[5], genre: value.returnValues[6],  year:value.returnValues[7],link_cover:value.returnValues[11]});
               }
-              
+              this.albumListLength = this.albumList.length;
               this.isLoading2 = false;
           }
 
@@ -398,41 +455,34 @@ export default {
                   .then(receipt => {
                       console.log(receipt);
                       this.alert_succ = true;
-                      setTimeout(()=>{
-                        this.alert_succ = false;
                         this.$refs.form.reset();
                         this.pricing = [0.001,0.0025,0.006,0.02,0.2];
                         URL.revokeObjectURL(this.songCoverLink);
                         URL.revokeObjectURL(this.songFileLink);
                         this.songCoverLink = null;
                         this.songFileLink = null;
-                      },1500);
+                      
                       
                       
                   }).catch(error => {
                       console.log(error.message);
                       this.alert_fail = true;
-                      setTimeout(()=>{
-                        this.alert_fail = false;
                         this.$refs.form.reset();
                         this.pricing = [0.001,0.0025,0.006,0.02,0.2];
                         URL.revokeObjectURL(this.songCoverLink);
                         URL.revokeObjectURL(this.songFileLink);
                         this.songCoverLink = null;
                         this.songFileLink = null;
-                      },1500);
                       
                   });
                 }else{
                   this.alert_fail = true;
-                      setTimeout(()=>{
-                        this.alert_fail = false;
                         this.$refs.form.reset();
                         URL.revokeObjectURL(this.songCoverLink);
                         URL.revokeObjectURL(this.songFileLink);
                         this.songCoverLink = null;
                         this.songFileLink = null;
-                      },1500);
+                      
                 }
             }
 
@@ -488,7 +538,7 @@ export default {
         uploadCover(cover, file_url){
 
 
-            var metadata = {contentType: 'audio/mpeg',};
+            var metadata = {contentType: 'image/jpg',};
             const storageRef = ref(storage, this.artistName.toLowerCase().replace(/\s/g, "")+'_'+this.album.album.toLowerCase().replace(/\s/g, "")+'_cover.jpg');
             const uploadTask = uploadBytesResumable(storageRef, cover, metadata);
             uploadTask.on('state_changed', 

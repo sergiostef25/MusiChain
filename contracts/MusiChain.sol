@@ -23,7 +23,7 @@ contract MusiChain {
     }
 
     event rented(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase, uint expirationTime);
-    event artistAdded(address user, uint indexed idArtist, string artistName, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
+    event artistAdded(address user, uint indexed idArtist, string artistName, string link_avatar, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
     event songAdded(address indexed user, uint indexed idArtist, uint indexed idSong, string songName, string artistName, string album, string genre, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
 
     modifier costs(string memory artistName, string memory songName, uint option){ // modificatore per il controllo della quantità di ether per procedere all'acquisto della canzone
@@ -44,12 +44,12 @@ contract MusiChain {
     }
 
 
-    function addArtist(string memory artistName) external notOwner{
+    function addArtist(string memory artistName, string memory link_avatar) external notOwner{
         require(artistsCheck[artistName] == 0,"Artists already exists"); //controllo che l'artista non sia già stato inserito precedentemente
         require(bytes(artists[msg.sender]).length == 0 ,"You are already an artist"); // controllo che l'account che usa questa funzione non sia già un artista
         artists[msg.sender] = artistName;
         artistsCheck[artistName] = idArtist;
-        emit artistAdded(msg.sender, idArtist, artistName ,block.timestamp);
+        emit artistAdded(msg.sender, idArtist, artistName , link_avatar, block.timestamp);
         idArtist++;
     }
     
