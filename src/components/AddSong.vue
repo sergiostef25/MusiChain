@@ -10,7 +10,20 @@
             max-width="150"
             :src=artistAvatarLink
             class="rounded-pill mb-10"
-          ></v-img>
+          >
+          <template v-slot:placeholder>
+              <v-row
+                class="fill-height ma-0"
+                align="center"
+                justify="center"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="grey lighten-5"
+                ></v-progress-circular>
+              </v-row>
+          </template>
+          </v-img>
           <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span>
           <br/>Let's add a song!</h2>
           
