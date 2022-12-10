@@ -3,7 +3,11 @@
           <h1 align="center">Rent a Song</h1>
           <v-row justify="center">
           <v-col align="center" cols="12" md="6">
-
+            <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            >
             <v-autocomplete
                 v-model="songId"
                 :items="songList"
@@ -69,11 +73,38 @@
               >
               Rent for {{amount}} ETH
             </v-btn>
-
+            </v-form>
         </v-col>
       </v-row>
 
-      <v-row justify="center">
+      <v-snackbar :timeout="3000" v-model="alert_succ" color="success">
+        Song successfully rented
+        <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="alert_succ = false"
+        >
+          Close
+        </v-btn>
+      </template>
+      </v-snackbar>
+      <v-snackbar :timeout="3000" v-model="alert_fail" color="error">
+        Fail, unable to rent the song
+        <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="alert_fail = false"
+        >
+          Close
+        </v-btn>
+      </template>
+      </v-snackbar>
+
+<!--       <v-row justify="center">
         <v-col align="center" cols="12" md="3">
           <v-alert type="success" transition="fade-transition" :value="alert_succ">
            Song successfully rented
@@ -83,7 +114,7 @@
           Fail, unable to rent the song
           </v-alert>
         </v-col>
-       </v-row>
+       </v-row> -->
       <v-row justify="center">
         <v-col align="center" cols="12" md="3" v-if="songId">
         
@@ -237,24 +268,23 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
             console.log('Amount MusiChain '+amountMusiChain);
             console.log('Renting '+this.rentPeriodNumeric);
             const song = this.songList.find(x => x.id === this.songId);
-            contractMusiChain.methods.buySong(song.artistName, song.songName, amountArtist, amountMusiChain, this.rentPeriodNumeric)
+            contractMusiChain.methods.buySong(song.artistName, song.songName, amountArtist, amountMusiChain, this.rentPeriodNumeric, song.link_cover)
             .send({from: this.address, value: amountWei})
             .then(receipt => {
               this.alert_succ=true;
                 console.log('CANZONE COMPRATA');
                 console.log(receipt);
                 this.downloadSong(song);
-                setTimeout(()=>{
-                            this.alert_succ=false;
-                            this.$refs.form.reset();
-                          },3000)
+                this.amount = null;
+                this.valid = false;
+                this.$refs.form.reset();
+                          
             }).catch(error => {
                 console.log('CANZONE NON COMPRATA'+error.message);
                 this.alert_fail=true;
-                setTimeout(()=>{
-                            this.alert_fail=false;
-                            this.$refs.form.reset();
-                          },3000)
+                this.amount = null;
+                this.valid = false;
+                this.$refs.form.reset();
             });
           }
 
