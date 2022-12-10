@@ -22,9 +22,9 @@ contract MusiChain {
         idSong = 1;
     }
 
-    event rented(address indexed user, uint indexed idArtist, string artistName, string songName, uint timeOfPurchase, uint expirationTime);
+    event rented(address indexed user, string artistName, string songName, uint timeOfPurchase, uint expirationTime, string link_cover);
     event artistAdded(address user, uint indexed idArtist, string artistName, string link_avatar, uint timeOfInsertion); //evento che verrà richiamato all'aggiunta di un nuovo artista in MusiChain
-    event songAdded(address indexed user, uint indexed idArtist, uint indexed idSong, string songName, string artistName, string album, string genre, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
+    event songAdded(address indexed user, uint indexed idArtist, uint indexed id_song, string songName, string artistName, string album, string genre, uint year, uint timeOfInsertion, uint[] pricing, string link_file, string link_cover); //evento che verrà richiamato all'aggiunta di una nuova canzone
 
     modifier costs(string memory artistName, string memory songName, uint option){ // modificatore per il controllo della quantità di ether per procedere all'acquisto della canzone
         uint amount;
@@ -63,22 +63,22 @@ contract MusiChain {
         idSong++;
     }
 
-    function buySong(string memory artistName, string memory songName, uint amountArtist, uint amountMusiChain, uint option) external payable costs(artistName, songName, option) notOwner{ 
+    function buySong(string memory artistName, string memory songName, uint amountArtist, uint amountMusiChain, uint option, string memory link_cover) external payable costs(artistName, songName, option) notOwner{ 
         require(option>=0 && option<=5, "Not the right option");
         require(songs[artistName][songName].songOwner != msg.sender,"Artist cannot buy its music"); // controllo che l'artsta non compri la sua stessa musica
         (bool sentArtist,) = songs[artistName][songName].songOwner.call{value: (amountArtist)}(""); // invio degli ethers all'account dell'artista
         (bool sentMusiChian,) = owner.call{value: (amountMusiChain)}(""); // invio degli ethers all'acount del proprietario di MusiChain
         require(sentArtist && sentMusiChian,"Fail to send Ether"); // controllo che le operazioni siano andate a buon fine
         if(option == 0){
-            emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + 1 days);
+            emit rented(msg.sender, artistName, songName, block.timestamp, block.timestamp + 1 days, link_cover);
         }else if(option == 1){
-            emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (3*1 days));
+            emit rented(msg.sender, artistName, songName, block.timestamp, block.timestamp + (3*1 days), link_cover);
         }else if(option == 2){
-            emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + 1 weeks);
+            emit rented(msg.sender, artistName, songName, block.timestamp, block.timestamp + 1 weeks, link_cover);
         }else if(option == 3){
-            emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (31*1 days));
+            emit rented(msg.sender, artistName, songName, block.timestamp, block.timestamp + (31*1 days), link_cover);
         }else{
-            emit rented(msg.sender, artistsCheck[artistName], artistName, songName, block.timestamp, block.timestamp + (365*1 days));
+            emit rented(msg.sender, artistName, songName, block.timestamp, block.timestamp + (365*1 days), link_cover);
         }
         
     }

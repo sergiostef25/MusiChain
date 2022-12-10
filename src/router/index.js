@@ -35,8 +35,8 @@ const routes = [
   },
 
   {
-    path: '/list',
-    name: 'list',
+    path: '/library',
+    name: 'library',
     component: ListView
   },
 
