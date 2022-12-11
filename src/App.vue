@@ -82,6 +82,7 @@ export default {
           {icon: 'mdi-cart-arrow-down', text: 'Buy Song', route: '/buy'},
           {icon: 'mdi-play', text: 'Music Player', route: '/player'},
           {icon: 'mdi-card-text-outline', text: 'List Artists', route: '/listArtist'},
+          {icon: 'mdi-playlist-music', text: 'Library', route: '/library'},
         ]
       }
     },
