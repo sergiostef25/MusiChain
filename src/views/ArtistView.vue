@@ -10,6 +10,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
+          :disabled="isLoading"
         >
         <v-img 
             v-if="artistAvatarLink"
