@@ -34,6 +34,7 @@
             ref="form"
             v-model="valid"
             lazy-validation
+            :disabled="isLoading"
           >
             
             <v-text-field
@@ -282,7 +283,10 @@ import { storage } from "@/firebase";
 import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage"; 
 const Web3 = require('web3');
 const MusiChain = require('../../build/contracts/MusiChain.json');
-
+var web3=null;
+var id=null;
+var deployedNetwork=null;
+var contractMusiChain=null;
 export default {
 
       components: {
@@ -305,7 +309,6 @@ export default {
         valid: false,
         isLoading: false,
         albumList: [],
-        albumListLength: 0,
         search: null,
         isLoading2: false,
         result: null,
@@ -336,10 +339,10 @@ export default {
       
       created(){
         const init = async () => {
-          const web3 = new Web3(window.ethereum);
-          const id = await web3.eth.net.getId();
-          const deployedNetwork = MusiChain.networks[id];
-          const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+          web3 = new Web3(window.ethereum);
+          id = await web3.eth.net.getId();
+          deployedNetwork = MusiChain.networks[id];
+          contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
           
           const artistId = await contractMusiChain.methods.artistsCheck(this.artistName).call();
           const result = await contractMusiChain.getPastEvents('artistAdded', {filter: {idArtist: artistId},fromBlock: 0});
@@ -378,26 +381,22 @@ export default {
           this.isLoading2 = true;
 
           const init = async () => {
-              const web3 = new Web3('http://localhost:7545');
+              /* const web3 = new Web3('http://localhost:7545');
               const id = await web3.eth.net.getId();
               const deployedNetwork = MusiChain.networks[id];
-              const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+              const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address); */
               
               this.result = await contractMusiChain.getPastEvents('songAdded', {filter: {user: this.address}, fromBlock: 0});
-              this.albumList = [];
+              /* this.albumList = []; */
               for (let [, value] of Object.entries(this.result)) {
                   this.albumList.push({album:value.returnValues[5], genre: value.returnValues[6],  year:value.returnValues[7],link_cover:value.returnValues[11]});
               }
-              this.albumListLength = this.albumList.length;
               this.isLoading2 = false;
           }
 
             init();
         },
 
-        album(){
-          console.log("ALBUM "+this.album.album);
-        }
 
       },
       props: {
@@ -435,6 +434,8 @@ export default {
           URL.revokeObjectURL(this.songFileLink);
           this.songCoverLink = null;
           this.songFileLink = null;
+          this.isLoading = false;
+          this.albumList = [];
         },
 
         previewCover () {
@@ -452,10 +453,10 @@ export default {
         submitSong(file_url, cover_url){
           const urls = [file_url, cover_url];
           const init = async () => {
-                const web3 = new Web3('http://localhost:7545');
+                /* const web3 = new Web3('http://localhost:7545');
                 const id = await web3.eth.net.getId();
                 const deployedNetwork = MusiChain.networks[id];
-                const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+                const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address); */
                 var new_pricing = [];
                 this.pricing.forEach(toWei)
                 function toWei(item) {
@@ -468,40 +469,25 @@ export default {
                   .then(receipt => {
                       console.log(receipt);
                       this.alert_succ = true;
-                        this.$refs.form.reset();
-                        this.pricing = [0.001,0.0025,0.006,0.02,0.2];
-                        URL.revokeObjectURL(this.songCoverLink);
-                        URL.revokeObjectURL(this.songFileLink);
-                        this.songCoverLink = null;
-                        this.songFileLink = null;
+                        this.reset();
                       
                       
                       
                   }).catch(error => {
                       console.log(error.message);
                       this.alert_fail = true;
-                        this.$refs.form.reset();
-                        this.pricing = [0.001,0.0025,0.006,0.02,0.2];
-                        URL.revokeObjectURL(this.songCoverLink);
-                        URL.revokeObjectURL(this.songFileLink);
-                        this.songCoverLink = null;
-                        this.songFileLink = null;
+                      this.reset();
                       
                   });
                 }else{
                   this.alert_fail = true;
-                        this.$refs.form.reset();
-                        URL.revokeObjectURL(this.songCoverLink);
-                        URL.revokeObjectURL(this.songFileLink);
-                        this.songCoverLink = null;
-                        this.songFileLink = null;
+                  this.reset();
                       
                 }
             }
 
             init();
-            this.valid = true;
-            this.isLoading = false;
+            
         },
 
 

@@ -7,6 +7,7 @@
             ref="form"
             v-model="valid"
             lazy-validation
+            :diasbled="isLoading"
             >
             <v-autocomplete
                 v-model="songId"
@@ -18,7 +19,7 @@
                 chips
                 clearable
                 hide-selected
-                :loading="isLoading"
+                :loading="isLoading2"
                 :search-input.sync="search"
             >
             <template v-slot:selection="{ attr, on, item, selected }">
@@ -65,11 +66,11 @@
             ></v-select>
 
             <v-btn
-              v-if="connected"
-              :disabled="!valid"
+              v-if="connected && (songId!=null && rentPeriod!=null)"
+              :disabled="isLoading"
               color="success"
               class="mr-4"
-              @click="rentSong"
+              @click="validate"
               >
               Rent for {{amount}} ETH
             </v-btn>
@@ -135,7 +136,11 @@ import { ref, getBytes} from "firebase/storage";
 const crypto = require("crypto-js");
 const Web3 = require('web3');
 const MusiChain = require('../../build/contracts/MusiChain.json');  
-  
+var web3=null;
+var id=null;
+var deployedNetwork=null;
+var contractMusiChain=null;
+
     export default {
       components: {
       VuetifyAudio: () => import('vuetify-audio'),
@@ -143,6 +148,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
       data: () => ({
         songList: [],
         isLoading: false,
+        isLoading2: false,
         search: null,
         alert_succ: false,
         alert_fail: false,
@@ -156,6 +162,19 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         songFileLink: null,
         rentList: ['1 day', '3 days', '1 week', '1 month', '1 year'],
       }),
+
+      created(){
+        const init = async () => {
+          web3 = new Web3('http://localhost:7545');
+          id = await web3.eth.net.getId();
+          deployedNetwork = MusiChain.networks[id];
+          contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+        }
+
+        init();
+        
+      },
+
       watch:{
 
         songId(){
@@ -188,13 +207,10 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         // Items have already been loaded
         if (this.songList.length > 0) return
 
-        this.isLoading = true;
+        this.isLoading2 = true;
 
         const init = async () => {
-            const web3 = new Web3('http://localhost:7545');
-            const id = await web3.eth.net.getId();
-            const deployedNetwork = MusiChain.networks[id];
-            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            
             
             const result = await contractMusiChain.getPastEvents('songAdded', {fromBlock: 0});
             
@@ -203,7 +219,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
                 this.songList.push({idArtist:value.returnValues[1],id:value.returnValues[2],title:value.returnValues[3]+' - '+value.returnValues[5]+'('+value.returnValues[7]+'), '+value.returnValues[4]+' ['+value.returnValues[6]+']',songName:value.returnValues[3], artistName:value.returnValues[4], album:value.returnValues[5], genre: value.returnValues[6],  year:value.returnValues[7],pricing:value.returnValues[9],link_file:value.returnValues[10],link_cover:value.returnValues[11]});
             }
             console.log(this.songList);
-            this.isLoading = false;
+            this.isLoading2 = false;
           }
 
           init();
@@ -216,12 +232,15 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
   
       methods: {
         validate () {
+          this.isLoading = true;
           this.$refs.form.validate();
           this.rentSong();
-          //this.$refs.form.reset();
+          
         },
         reset () {
-          this.$refs.form.reset()
+          this.isLoading = false;
+          this.amount = null;
+          this.$refs.form.reset();
         },
 
         
@@ -256,10 +275,10 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
 
         rentSong(){
           const init = async () => {
-            const web3 = new Web3(window.ethereum);
-            const id = await web3.eth.net.getId();
-            const deployedNetwork = MusiChain.networks[id];
-            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            web3 = new Web3(window.ethereum);
+            id = await web3.eth.net.getId();
+            deployedNetwork = MusiChain.networks[id];
+            contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
             const amountWei = web3.utils.toWei(this.amount.toString());
             const amountArtist = web3.utils.toWei((this.amount*0.98).toString());
             const amountMusiChain = web3.utils.toWei((this.amount*0.02).toString());
@@ -275,16 +294,13 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
                 console.log('CANZONE COMPRATA');
                 console.log(receipt);
                 this.downloadSong(song);
-                this.amount = null;
-                this.valid = false;
-                this.$refs.form.reset();
-                          
+                this.reset();
+                this.valid = true;          
             }).catch(error => {
                 console.log('CANZONE NON COMPRATA'+error.message);
                 this.alert_fail=true;
-                this.amount = null;
+                this.reset();
                 this.valid = false;
-                this.$refs.form.reset();
             });
           }
 
