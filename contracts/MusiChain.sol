@@ -6,7 +6,7 @@ contract MusiChain {
     mapping(string => mapping(string => Song)) public songs; // una canzone è identificata dalla coppia (NomeArtista, NomeCanzone)
     mapping(address => string) public artists; //Per verificare chi richiama la funzione addArtist non abbia già agggiunto un artista, questo perchè un account può essere associato a solo un artista
     mapping(string => uint) public artistsCheck; //per controllare che il nome dell'artista non sia già stato usato
-
+    mapping(address => string) public users;
     struct Song{
         address payable songOwner; //l'indirizzo dell'artista
         uint[] pricing;
@@ -43,6 +43,9 @@ contract MusiChain {
         _;
     }
 
+    function addUser(address userAddress, string memory randomKey) external notOwner{
+        users[userAddress] = randomKey;
+    }
 
     function addArtist(string memory artistName, string memory link_avatar) external notOwner{
         require(artistsCheck[artistName] == 0,"Artists already exists"); //controllo che l'artista non sia già stato inserito precedentemente

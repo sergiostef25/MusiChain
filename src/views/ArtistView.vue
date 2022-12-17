@@ -9,7 +9,6 @@
         <v-form
           ref="form"
           v-model="valid"
-          lazy-validation
           :disabled="isLoading"
         >
         <v-img 
@@ -187,19 +186,21 @@ export default {
               init();
               this.$emit("addArtist", new_artistsList); */
               console.log(receipt);
+              this.reset();
           }).catch(error => {
             URL.revokeObjectURL(this.artistAvatarLink);
             this.artistAvatarLink = null;
+            this.reset();
             console.log(error.message);
           });
         }
 
         init();
-        this.isLoading = false;
       },
 
       reset () {
-        this.$refs.form.reset()
+        this.$refs.form.reset();
+        this.isLoading = false;
       },
     },
 }

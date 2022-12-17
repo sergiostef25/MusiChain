@@ -312,20 +312,27 @@ var contractMusiChain=null;
 
           getBytes(songRef).then((bytes) =>{
                     console.log('Canzone scaricata' + bytes);
-                    if (bytes) {
-                    const byteArray = new Uint8Array(bytes);
-                    var wordArray = crypto.lib.WordArray.create(byteArray);
-                    console.log(wordArray);
-                    var encrypted = crypto.AES.encrypt(wordArray, "Secret Passphrase").toString();
-                    console.log("File Criptato = "+encrypted);
-                    const blob = new Blob([encrypted], { type: "audio/mpeg"});
-                    const url = window.URL.createObjectURL(blob);
-                    var a = document.createElement("a");
-                    a.href = url;
-                    a.download = song.artistName.toLowerCase().replace(/\s/g, "")+'_'+song.songName.toLowerCase().replace(/\s/g, "");
-                    a.click();
-                    URL.revokeObjectURL(url);
-                }
+                    const init = async() =>{
+                      const randomKey = await contractMusiChain.methods.users(this.address).call();
+                      console.log(randomKey);
+                      if (bytes) {
+                          const byteArray = new Uint8Array(bytes);
+                          var wordArray = crypto.lib.WordArray.create(byteArray);
+                          console.log(wordArray);
+                          var encrypted = crypto.AES.encrypt(wordArray, randomKey).toString();
+                          console.log("File Criptato = "+encrypted);
+                          const blob = new Blob([encrypted], { type: "audio/mpeg"});
+                          const url = window.URL.createObjectURL(blob);
+                          var a = document.createElement("a");
+                          a.href = url;
+                          a.download = song.artistName.toLowerCase().replace(/\s/g, "")+'_'+song.songName.toLowerCase().replace(/\s/g, "");
+                          a.click();
+                          URL.revokeObjectURL(url);
+                      }
+                    };
+
+                    init();
+                    
                 }).catch((error) => {
                     console.log(error)
                 });
