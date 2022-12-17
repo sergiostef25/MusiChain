@@ -63,6 +63,7 @@
 </template>
 
 <script>
+var uuid = require("uuid");
 const Web3 = require('web3');
 const MusiChain = require('../build/contracts/MusiChain.json');
 var web3=null;
@@ -128,6 +129,15 @@ export default {
             const result = await contractMusiChain.methods.artists(this.address).call();
             if(result.length > 0){
               this.artistName = result;
+            }
+
+            const result2 = await contractMusiChain.methods.users(this.address).call();
+            if(result2.length == 0){
+              var randomKey = uuid.v4();
+              console.log(randomKey);
+              console.log(this.address);
+              const result3 = await contractMusiChain.methods.addUser(this.address, randomKey).send({from: this.address});
+              console.log(result3);
             }
           }
 
