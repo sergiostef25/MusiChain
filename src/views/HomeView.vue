@@ -44,7 +44,7 @@
     >
     <v-carousel
       cycle
-      height="600"
+      height="550"
       show-arrows-on-hover
     >
       <v-carousel-item
@@ -58,7 +58,7 @@
           justify="center"
         >
           <div class="text-h2">
-            <h5> {{ slides[i] }} </h5>  
+            <h6> {{ slides[i] }} </h6>  
           </div>
         </v-row>
       </v-carousel-item>
@@ -126,7 +126,7 @@
         owner: '',
         items: [
           {
-            src: 'https://res.allmacwallpaper.com/get/Retina-MacBook-Air-13-inch-wallpapers/flint-blur-5k-2560x1600/21531-11.jpg',
+            src: 'https://c4.wallpaperflare.com/wallpaper/654/555/787/geometry-cyberspace-digital-art-lines-wallpaper-preview.jpg',
           },
           {
             src: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
