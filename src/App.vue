@@ -63,9 +63,13 @@
 </template>
 
 <script>
+var uuid = require("uuid");
 const Web3 = require('web3');
 const MusiChain = require('../build/contracts/MusiChain.json');
-
+var web3=null;
+var id=null;
+var deployedNetwork=null;
+var contractMusiChain=null;
 export default {
   name: 'App',
   data() {
@@ -89,12 +93,12 @@ export default {
   
 
   
-  mounted(){
+  created(){
     const init = async () => {
-            const web3 = new Web3('http://localhost:7545');
-            const id = await web3.eth.net.getId();
-            const deployedNetwork = MusiChain.networks[id];
-            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            web3 = new Web3('http://localhost:7545');
+            id = await web3.eth.net.getId();
+            deployedNetwork = MusiChain.networks[id];
+            contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
 
             const result = await contractMusiChain.getPastEvents('artistAdded', {fromBlock: 0});
 
@@ -117,14 +121,23 @@ export default {
             this.address = window.ethereum.selectedAddress;
 
             const init = async () => {
-            const web3 = new Web3(window.ethereum);
-            const id = await web3.eth.net.getId();
-            const deployedNetwork = MusiChain.networks[id];
-            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            web3 = new Web3(window.ethereum);
+            id = await web3.eth.net.getId();
+            deployedNetwork = MusiChain.networks[id];
+            contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
 
             const result = await contractMusiChain.methods.artists(this.address).call();
             if(result.length > 0){
               this.artistName = result;
+            }
+
+            const result2 = await contractMusiChain.methods.users(this.address).call();
+            if(result2.length == 0){
+              var randomKey = uuid.v4();
+              console.log(randomKey);
+              console.log(this.address);
+              const result3 = await contractMusiChain.methods.addUser(this.address, randomKey).send({from: this.address});
+              console.log(result3);
             }
           }
 

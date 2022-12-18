@@ -34,7 +34,8 @@
 <script>
 //import { onMounted } from "vue";
 const crypto = require("crypto-js");
-
+const Web3 = require('web3');
+const MusiChain = require('../../build/contracts/MusiChain.json');
 
 
 export default{
@@ -56,16 +57,25 @@ export default{
         upload(){
             var reader = new FileReader();
             reader.readAsText(this.songFile);
-            reader.onload = () => {
-              console.log(reader.result);
-              var decrypted = crypto.AES.decrypt(reader.result, "Secret Passphrase");             
-              var typedArray = this.convertWordArrayToUint8Array(decrypted);
-              const blob = new Blob([typedArray], { type: "audio/mpeg"});
-              this.file = window.URL.createObjectURL(blob);
-              setTimeout(() => {
-                 URL.revokeObjectURL(this.file);
-              },1000);
-              this.$refs.form.reset();
+            reader.onloadend = () => {
+                const init = async() =>{
+                    const web3 = new Web3(window.ethereum);
+                    const id = await web3.eth.net.getId();
+                    const deployedNetwork = MusiChain.networks[id];
+                    const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+                    const randomKey = await contractMusiChain.methods.users(this.address).call();
+                    console.log(randomKey);
+                    console.log(reader.result);
+                    var decrypted = crypto.AES.decrypt(reader.result, randomKey);             
+                    var typedArray = this.convertWordArrayToUint8Array(decrypted);
+                    const blob = new Blob([typedArray], { type: "audio/mpeg"});
+                    this.file = window.URL.createObjectURL(blob);
+                    setTimeout(() => {
+                        URL.revokeObjectURL(this.file);
+                    },5000);
+                    this.$refs.form.reset();
+                };
+                init();
             }
 
         },
