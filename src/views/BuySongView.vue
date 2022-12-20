@@ -287,7 +287,7 @@ var contractMusiChain=null;
             console.log('Amount MusiChain '+amountMusiChain);
             console.log('Renting '+this.rentPeriodNumeric);
             const song = this.songList.find(x => x.id === this.songId);
-            contractMusiChain.methods.buySong(song.artistName, song.songName, amountArtist, amountMusiChain, this.rentPeriodNumeric, song.link_cover)
+            contractMusiChain.methods.buySong(song.artistName, song.songName, amountArtist, amountMusiChain, this.rentPeriodNumeric)
             .send({from: this.address, value: amountWei})
             .then(receipt => {
               this.alert_succ=true;
@@ -321,6 +321,12 @@ var contractMusiChain=null;
                           console.log(wordArray);
                           var encrypted = crypto.AES.encrypt(wordArray, randomKey).toString();
                           console.log("File Criptato = "+encrypted);
+                          var md5 = crypto.MD5(encrypted).toString();
+                          console.log("MD5 = "+md5);
+                          
+                          const result = await contractMusiChain.methods.emitRented(song.artistName, song.songName, this.rentPeriodNumeric, song.link_cover, md5)
+                          .send({from: this.address})
+                          console.log(result);
                           const blob = new Blob([encrypted], { type: "audio/mpeg"});
                           const url = window.URL.createObjectURL(blob);
                           var a = document.createElement("a");
