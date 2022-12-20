@@ -1,7 +1,7 @@
 <template>
     <v-container>
-      <v-row>
-        <v-col justify="center" md="6"
+      <v-row justify="center">
+        <v-col justify="center" md="7"
           v-for="(song, i) in songList"
           :key="i"
           cols="12"
@@ -67,7 +67,6 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
         return {
             isLoading: false,
             songList: [],
-            
         }
       },
   
@@ -76,7 +75,11 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
       connected: Boolean,
       address: String,
     },
-
+    watch:{
+      connected(){
+        this.displaySongs();
+      }
+    },
     mounted(){
       if(this.connected){
         this.displaySongs();
@@ -86,7 +89,7 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
     methods:{
         displaySongs(){
           const init = async () => {
-            const web3 = new Web3('http://localhost:7545');
+            const web3 = new Web3(window.ethereum);
             const id = await web3.eth.net.getId();
             const deployedNetwork = MusiChain.networks[id];
             const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
@@ -94,12 +97,14 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
             //const idArt = await contractMusiChain.methods.artistsCheck(this.artistName).call();
             const result = await contractMusiChain.getPastEvents('rented', {filter: {user: this.address},fromBlock: 0});
             this.songList = [];
-            for (let [, value] of Object.entries(result)) {
+            var color = ['#4A148C','#6A1B9A','#7B1FA2','#8E24AA','#AB47BC','#BA68C8','#CE93D8','#E1BEE7','#F3E5F5']
+            for (let [key, value] of Object.entries(result)) {
                 /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
-              
+                
                 if(value.returnValues[4]*1000 > Date.now()){
-                  this.songList.push({artistName: value.returnValues[1], songName: value.returnValues[2],timeOfPurchase: value.returnValues[3],expirationTime: value.returnValues[4], link_cover: value.returnValues[5],color: "#5C6BC0"}); 
+                  this.songList.push({artistName: value.returnValues[1], songName: value.returnValues[2],timeOfPurchase: value.returnValues[3],expirationTime: value.returnValues[4], link_cover: value.returnValues[5],color: color[key]}); 
                 }
+
                 }
             
           }
