@@ -1,6 +1,6 @@
 <template>  
         <v-container>
-          <h1 align="center">Rent a Song</h1>
+          <h1 align="center" class="ma-10">Rent a Song</h1>
 
           <!-- <v-sheet
             class="mx-auto"

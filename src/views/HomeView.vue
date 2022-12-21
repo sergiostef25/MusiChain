@@ -35,7 +35,7 @@
     <v-sheet
       class="mx-auto mb-10"
       elevation="0"
-      max-width="80%"
+      max-width="70%"
       color="transparent"
     >
       <v-slide-group
@@ -53,8 +53,8 @@
             :color="active ? 'primary' : 'grey lighten-1'"
             class="ma-4 rounded-circle"
             
-            height="120"
-            width="120"
+            height="150"
+            width="150"
             :img="artist.link_avatar"
           >
           
@@ -200,7 +200,6 @@
       address: String,
       artistList: Array
     },
-
     methods:{
       
     }

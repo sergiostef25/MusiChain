@@ -101,15 +101,6 @@ export default {
       }
     },
   
-/*     watch: {
-        $route(to, from){
-            console.log(to.params.file);
-            console.log(from.name);
-            console.log("Link File da elimare: "+this.file);
-            URL.revokeObjectURL(this.file);
-            console.file("Link File eliminato "+this.file);
-        }
-    }, */
   
     created(){
     const init = async () => {

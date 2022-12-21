@@ -219,9 +219,10 @@ export default {
                     
                   new_artistsList.push({id: value.returnValues[1],name : value.returnValues[2], link_avatar: value.returnValues[3]});
                 }
+                this.$emit("addArtist", new_artistsList);
               }
               init();
-              this.$emit("addArtist", new_artistsList);
+              
               console.log(receipt);
               this.reset();
           }).catch(error => {
