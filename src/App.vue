@@ -4,15 +4,24 @@
       dark
       app
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
+    <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+        
           <router-link to="/" style="text-decoration: none; color: inherit;">
-            <v-toolbar-title>MusiChain</v-toolbar-title>
+            <v-toolbar-title >MusiChain
+            <v-app-bar-nav-icon class="mr-5">
+              <v-img
+                :src="require('./assets/musichain2.svg')"
+                class="mrl-8"
+                contain
+                max-height="50"
+          max-width="50"/>
+            </v-app-bar-nav-icon>
+          </v-toolbar-title>
           </router-link>
           <!-- connect-wallet button is visible if the wallet is not connected -->
           <v-btn text v-if="!connected" @click="connect" fixed right>Connect Wallet</v-btn>
           <v-btn text v-if="connected" disabled fixed right>Wallet Connected</v-btn>
-
+          
 
       
     </v-app-bar>
@@ -48,6 +57,7 @@
           :connected="connected" 
           :address="address" 
           :artistName="artistName" 
+          :artistList="artistList"
           @changeArtistName="artistName = $event" 
           @addArtist="(artistsList = $event)">
           </router-view>
@@ -76,7 +86,7 @@ export default {
       return {
         address: null,
         artistName: 'none',
-        artistsList: [],
+        artistList: [],
         connected: false,
         drawer: false,
         group: null,
@@ -85,7 +95,7 @@ export default {
           {icon: 'mdi-account-circle', text: 'Artist', route: '/artist'},
           {icon: 'mdi-cart-arrow-down', text: 'Buy Song', route: '/buy'},
           {icon: 'mdi-play', text: 'Music Player', route: '/player'},
-          {icon: 'mdi-card-text-outline', text: 'List Artists', route: '/listArtist'},
+          /* {icon: 'mdi-card-text-outline', text: 'List Artists', route: '/listArtist'}, */
           {icon: 'mdi-playlist-music', text: 'Library', route: '/library'},
         ]
       }
@@ -112,7 +122,7 @@ export default {
 
             for (let [, value] of Object.entries(result)) {
                 
-                this.artistsList.push({id: value.returnValues[1],name : value.returnValues[2]});
+                this.artistList.push({id: value.returnValues[1],name : value.returnValues[2], link_avatar: value.returnValues[3]});
             }
             
           }
