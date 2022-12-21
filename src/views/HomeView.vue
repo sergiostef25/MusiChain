@@ -27,54 +27,57 @@
 
       
     </v-row>
-    <v-row align="center" justify="center">
-      <h2>Our artist</h2>
+    <v-row align="center" justify="center" class="mb-10">
+      <h2>Our artists</h2>
     </v-row>
-    <v-sheet
-            class="mx-auto"
-            
-            max-width="50%"
-            color="transparent"
-          >
-            <v-slide-group
-              v-model="model"
-              class="pa-4"
-              center-active
-              show-arrows
-            >
-              <v-slide-item
-                v-for="(artist,n) in artistList"
-                :key="n"
-                v-slot="{ active}"
-              >
-              
-                <v-card
-                  :color="active ? 'transparent' : 'transparent'"
-                  class="ma-8"
-                  height="150"
-                  width="100"
-                  elevation="0"
-                  
-                >
-                  <v-row
-                    class="fill-height"
-                    align="center"
-                    justify="center"
 
-                  >
-                  
-                    <v-scale-transition>
-                      <v-img :src="artist.link_avatar" class="rounded-circle"></v-img>
-                      
-                    </v-scale-transition>
-                    {{ artist.name }}
-                  </v-row>
-                  
-                </v-card>
-                
-              </v-slide-item>
-            </v-slide-group>
-          </v-sheet>
+  
+    <v-sheet
+      class="mx-auto mb-10"
+      elevation="0"
+      max-width="80%"
+      color="transparent"
+    >
+      <v-slide-group
+        v-model="model"
+        class="pa-4"
+        show-arrows
+      >
+        <v-slide-item
+          v-for="(artist,i) in artistList"
+          :key="i"
+          v-slot="{ active }"
+        >
+        
+          <v-card
+            :color="active ? 'primary' : 'grey lighten-1'"
+            class="ma-4 rounded-circle"
+            
+            height="120"
+            width="120"
+            :img="artist.link_avatar"
+          >
+          
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
+            
+          </v-row>
+        
+          <v-card-subtitle class="overline" justify="center" align="center">{{ artist.name }}</v-card-subtitle>
+
+          
+          
+          </v-card>
+          
+        </v-slide-item>
+      </v-slide-group>
+    </v-sheet>
+
+    
+
     
     
 
@@ -158,6 +161,7 @@
 
     data() {
       return {
+        model: null,
         contractResult: '',
         owner: '',
         items: [

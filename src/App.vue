@@ -111,7 +111,7 @@ export default {
         }
     }, */
   
-  created(){
+    created(){
     const init = async () => {
             web3 = new Web3('http://localhost:7545');
             id = await web3.eth.net.getId();

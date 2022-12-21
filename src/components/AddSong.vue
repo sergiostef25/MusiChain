@@ -1,6 +1,7 @@
 <template>
       
     <v-container>
+      <v-row justify="center" v-if="!addsong"><h2>Your Songs</h2></v-row>
       
       <v-row >
         <v-col align="center" cols="12" md="3">
@@ -24,13 +25,15 @@
               </v-row>
           </template>
           </v-img>
-          <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span>
-          <br/>Let's add a song!</h2>
+          <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span></h2>
+          <v-btn @click="addsong = !addsong" v-if="!addsong" color="primary">Let's add a new song!</v-btn>
+          <v-btn @click="addsong = !addsong" v-if="addsong" color="primary">Go to your catalog</v-btn>
           
         </v-col>
         
-        <v-col align="center" cols="12" md="6">
+        <v-col align="center" cols="12" md="6" >
           <v-form
+          v-if="addsong"
             ref="form"
             v-model="valid"
             lazy-validation
@@ -226,17 +229,44 @@
               Reset
             </v-btn>
           </v-col>
-            <!-- <v-col align="center" cols="12" md="5" v-if="(alert_succ || alert_fail)">
-              <v-alert type="success" transition="fade-transition" :value="alert_succ">
-                Song successfully added
-                </v-alert>
-                <v-alert type="error" transition="fade-transition" :value="alert_fail">
-                Song not added beacause already present
-              </v-alert>
-            </v-col> -->
+
           </v-row>
           </v-form>
           
+        <v-row justify="center" v-if="!addsong">
+        
+        <v-col justify="center" md="10"
+          v-for="(song, i) in songList"
+          :key="i"
+          cols="12"
+        >
+          <v-card
+            :color="song.color"
+            dark
+            
+          >
+            <div class="d-flex flex-no-wrap justify-space-between">
+              <div>
+                <v-card-title
+                  class="text-h5"
+                  v-text="song.songName"
+                ></v-card-title>
+                <v-card-subtitle>{{ song.album }} ({{ song.year }}), {{song.genre }}</v-card-subtitle>
+              </div>
+              <v-avatar
+                class="ma-3"
+                size="125"
+                tile
+              >
+                <v-img :src="song.link_cover"></v-img>
+              </v-avatar>
+              
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+
+
         </v-col>
         
         <v-col align="center" cols="12" md="3" v-if="(songCoverLink || songFileLink)">
@@ -248,7 +278,15 @@
           ></v-img>
           <vuetify-audio :file="songFileLink" color="success" v-if="(songCoverLink || songFileLink)"></vuetify-audio>
         </v-col>
+        
+        
+      
+
+      
+
       </v-row>
+
+      
       <v-snackbar :timeout="3000" v-model="alert_succ" color="success">
         Song successfully added
         <template v-slot:action="{ attrs }">
@@ -293,6 +331,8 @@ export default {
         VuetifyAudio: () => import('vuetify-audio'),
       },
       data: () => ({
+        addsong: false,
+        songList: [],
         audioFinish: ' ',
         setPricing: false,
         pricing: [0.001,0.0025,0.006,0.02,0.2],
@@ -353,8 +393,15 @@ export default {
 
         init();
       },
-
+      mounted(){
+        if(this.connected){
+          this.displaySongs();
+        }
+      },
       watch: {
+        connected(){
+          this.displaySongs();
+        },
         songFile(){
           if(this.songFile != null){
             this.previewSong();
@@ -420,6 +467,32 @@ export default {
            this.songCover = "0";
        }
       },
+
+      displaySongs(){
+          const init = async () => {
+            const web3 = new Web3(window.ethereum);
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            
+            //const idArt = await contractMusiChain.methods.artistsCheck(this.artistName).call();
+            const result = await contractMusiChain.getPastEvents('songAdded', {filter: {user: this.address},fromBlock: 0});
+            this.songList = [];
+            var color = ['#4A148C','#6A1B9A','#7B1FA2','#8E24AA','#AB47BC','#BA68C8','#CE93D8','#E1BEE7','#F3E5F5']
+            for (let [key, value] of Object.entries(result)) {
+                /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
+                
+                
+                  this.songList.push({songName: value.returnValues[3], album: value.returnValues[5], genre: value.returnValues[6], year: value.returnValues[7], link_cover: value.returnValues[11],color: color[key]}); 
+                
+
+                }
+            
+          }
+
+          init();
+        },
+
         validate () {
             this.$refs.form.validate();
             this.isLoading = true;
@@ -470,7 +543,7 @@ export default {
                       console.log(receipt);
                       this.alert_succ = true;
                         this.reset();
-                      
+                        this.displaySongs();
                       
                       
                   }).catch(error => {

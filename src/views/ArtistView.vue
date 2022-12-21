@@ -60,9 +60,14 @@
       </v-col>
     </v-row>
     <v-row v-if="(connected && artistName != 'none')" justify="center">
+      
       <!-- <h1 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span><br/>Let's add a song!</h1>
        -->
+      <!-- <v-btn color="success" class="ma-10" @click="newSong">Let's add a new song</v-btn> -->
       <AddSong :connected="connected" :address="address" :artistName="artistName" />
+   
+      
+       
     </v-row>
     
   </v-container>
@@ -78,6 +83,7 @@ import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 export default {
 
     data: () => ({
+      
       valid: false,
       name: null,
       artistAvatar: null,
@@ -97,8 +103,15 @@ export default {
       address: String,
       artistName: String
     },
-
+    mounted(){
+      if(this.connected){
+        this.displaySongs();
+      }
+    },
     watch:{
+      connected(){
+        this.displaySongs();
+      },
       artistAvatar(){
           if(this.artistAvatar != null){
             this.previewAvatar();
@@ -110,6 +123,30 @@ export default {
     },
 
     methods: {
+      displaySongs(){
+          const init = async () => {
+            const web3 = new Web3(window.ethereum);
+            const id = await web3.eth.net.getId();
+            const deployedNetwork = MusiChain.networks[id];
+            const contractMusiChain = new web3.eth.Contract(MusiChain.abi, deployedNetwork.address);
+            
+            //const idArt = await contractMusiChain.methods.artistsCheck(this.artistName).call();
+            const result = await contractMusiChain.getPastEvents('songAdded', {filter: {user: this.address},fromBlock: 0});
+            this.songList = [];
+            var color = ['#4A148C','#6A1B9A','#7B1FA2','#8E24AA','#AB47BC','#BA68C8','#CE93D8','#E1BEE7','#F3E5F5']
+            for (let [key, value] of Object.entries(result)) {
+                /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
+                
+                
+                  this.songList.push({songName: value.returnValues[3], album: value.returnValues[5], genre: value.returnValues[6], year: value.returnValues[7], link_cover: value.returnValues[11],color: color[key]}); 
+                
+
+                }
+            
+          }
+
+          init();
+        },
 
       previewAvatar(){
           this.artistAvatarLink = URL.createObjectURL(this.artistAvatar);
@@ -174,17 +211,17 @@ export default {
               this.$emit("changeArtistName", this.name);
               URL.revokeObjectURL(this.artistAvatarLink);
               this.artistAvatarLink = null;
-              /* var new_artistsList = [];
+              var new_artistsList = [];
               const init = async () => {
                 const result = await contractMusiChain.getPastEvents('artistAdded', {fromBlock: 0});
 
                 for (let [, value] of Object.entries(result)) {
                     
-                  new_artistsList.push(value.returnValues[2]);
+                  new_artistsList.push({id: value.returnValues[1],name : value.returnValues[2], link_avatar: value.returnValues[3]});
                 }
               }
               init();
-              this.$emit("addArtist", new_artistsList); */
+              this.$emit("addArtist", new_artistsList);
               console.log(receipt);
               this.reset();
           }).catch(error => {
