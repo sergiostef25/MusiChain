@@ -11,7 +11,7 @@
         <h1 class="text-h4 font-weight-thin mb-4">
           
         </h1>
-        <v-img
+        <!-- <v-img
           :src="require('../assets/musichain2.svg')"
           class="my-3"
           contain
@@ -19,24 +19,66 @@
         />
         <h4 class="subheading">
           MusiChain
-        </h4>
-        <br>
-        <br>
-        <br>
+        </h4> -->
+       
         
 
       </v-col>
 
       
     </v-row>
+    <v-row align="center" justify="center">
+      <h2>Our artist</h2>
+    </v-row>
+    <v-sheet
+            class="mx-auto"
+            
+            max-width="50%"
+            color="transparent"
+          >
+            <v-slide-group
+              v-model="model"
+              class="pa-4"
+              center-active
+              show-arrows
+            >
+              <v-slide-item
+                v-for="(artist,n) in artistList"
+                :key="n"
+                v-slot="{ active}"
+              >
+              
+                <v-card
+                  :color="active ? 'transparent' : 'transparent'"
+                  class="ma-8"
+                  height="150"
+                  width="100"
+                  elevation="0"
+                  
+                >
+                  <v-row
+                    class="fill-height"
+                    align="center"
+                    justify="center"
 
-    <br>
-    <br>
-    <br>
+                  >
+                  
+                    <v-scale-transition>
+                      <v-img :src="artist.link_avatar" class="rounded-circle"></v-img>
+                      
+                    </v-scale-transition>
+                    {{ artist.name }}
+                  </v-row>
+                  
+                </v-card>
+                
+              </v-slide-item>
+            </v-slide-group>
+          </v-sheet>
     
     
 
-  <template>
+  
     <v-card
     elevation="24"
     max-width="900"
@@ -64,17 +106,11 @@
       </v-carousel-item>
     </v-carousel>
     </v-card>
-  </template>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 
-  <template>
+
     <v-footer
+    class="mt-10"
     dark
     padless
     >
@@ -98,7 +134,7 @@
       </v-card-text>
       </v-card>
     </v-footer>
-  </template>
+
 
     
   </div>
@@ -158,6 +194,7 @@
     props: {
       connected: Boolean,
       address: String,
+      artistList: Array
     },
 
     methods:{
