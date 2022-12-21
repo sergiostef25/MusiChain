@@ -59,7 +59,7 @@
           :artistName="artistName" 
           :artistList="artistList"
           @changeArtistName="artistName = $event" 
-          @addArtist="(artistsList = $event)">
+          @addArtist="artistList = $event">
           </router-view>
 
       </v-container>
@@ -94,9 +94,9 @@ export default {
           {icon: 'mdi-home', text: 'Home', route: '/'},
           {icon: 'mdi-account-circle', text: 'Artist', route: '/artist'},
           {icon: 'mdi-cart-arrow-down', text: 'Buy Song', route: '/buy'},
-          {icon: 'mdi-play', text: 'Music Player', route: '/player'},
-          /* {icon: 'mdi-card-text-outline', text: 'List Artists', route: '/listArtist'}, */
           {icon: 'mdi-playlist-music', text: 'Library', route: '/library'},
+          {icon: 'mdi-play', text: 'Music Player', route: '/player'},
+          
         ]
       }
     },

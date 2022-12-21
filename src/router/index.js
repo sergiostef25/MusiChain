@@ -5,7 +5,6 @@ import ArtistView from '../views/ArtistView.vue'
 import MusicPlayerView from '@/views/MusicPlayerView.vue'
 import BuySongView from '../views/BuySongView.vue'
 import ListView from '../views/ListView.vue'
-import ListArtistView from '../views/ListArtistView.vue'
 
 
 
@@ -41,11 +40,7 @@ const routes = [
     component: ListView
   },
 
-  {
-    path: '/listArtist',
-    name: 'listArtist',
-    component: ListArtistView
-  },
+
 
 
 ]

@@ -200,8 +200,10 @@
       address: String,
       artistList: Array
     },
-    methods:{
-      
+    watch:{
+      artistList(){
+        console.log("cambiate");
+      }
     }
   }
 </script>
