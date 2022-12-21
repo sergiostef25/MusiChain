@@ -26,8 +26,8 @@
           </template>
           </v-img>
           <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span></h2>
-          <v-btn @click="addsong = !addsong" v-if="!addsong" color="primary">Let's add a new song!</v-btn>
-          <v-btn @click="addsong = !addsong" v-if="addsong" color="primary">Go to your catalog</v-btn>
+          <v-btn @click="addsong = !addsong" v-if="!addsong" color="purple">Let's add a new song!</v-btn>
+          <v-btn @click="addsong = !addsong" v-if="addsong" color="purple">Go to your catalog</v-btn>
           
         </v-col>
         
@@ -241,7 +241,7 @@
           cols="12"
         >
           <v-card
-            :color="song.color"
+            
             dark
             
           >
@@ -478,12 +478,12 @@ export default {
             //const idArt = await contractMusiChain.methods.artistsCheck(this.artistName).call();
             const result = await contractMusiChain.getPastEvents('songAdded', {filter: {user: this.address},fromBlock: 0});
             this.songList = [];
-            var color = ['#4A148C','#6A1B9A','#7B1FA2','#8E24AA','#AB47BC','#BA68C8','#CE93D8','#E1BEE7','#F3E5F5']
-            for (let [key, value] of Object.entries(result)) {
+            
+            for (let [, value] of Object.entries(result)) {
                 /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
                 
                 
-                  this.songList.push({songName: value.returnValues[3], album: value.returnValues[5], genre: value.returnValues[6], year: value.returnValues[7], link_cover: value.returnValues[11],color: color[key]}); 
+                  this.songList.push({songName: value.returnValues[3], album: value.returnValues[5], genre: value.returnValues[6], year: value.returnValues[7], link_cover: value.returnValues[11]}); 
                 
 
                 }

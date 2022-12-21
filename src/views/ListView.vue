@@ -7,7 +7,7 @@
           cols="12"
         >
           <v-card
-            :color="song.color"
+            
             dark
             
           >
@@ -97,12 +97,12 @@ const MusiChain = require('../../build/contracts/MusiChain.json');
             //const idArt = await contractMusiChain.methods.artistsCheck(this.artistName).call();
             const result = await contractMusiChain.getPastEvents('rented', {filter: {user: this.address},fromBlock: 0});
             this.songList = [];
-            var color = ['#4A148C','#6A1B9A','#7B1FA2','#8E24AA','#AB47BC','#BA68C8','#CE93D8','#E1BEE7','#F3E5F5']
-            for (let [key, value] of Object.entries(result)) {
+            
+            for (let [, value] of Object.entries(result)) {
                 /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
                 
                 if(value.returnValues[4]*1000 > Date.now()){
-                  this.songList.push({artistName: value.returnValues[1], songName: value.returnValues[2],timeOfPurchase: value.returnValues[3],expirationTime: value.returnValues[4], link_cover: value.returnValues[5],color: color[key]}); 
+                  this.songList.push({artistName: value.returnValues[1], songName: value.returnValues[2],timeOfPurchase: value.returnValues[3],expirationTime: value.returnValues[4], link_cover: value.returnValues[5]}); 
                 }
 
                 }
