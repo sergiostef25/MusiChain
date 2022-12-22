@@ -26,19 +26,7 @@
                   Expire: {{new Date(song.expirationTime * 1000).toDateString()}}
                 </div>
                 </v-card-subtitle>
-                
-                <!-- <v-card-actions>
-                  <v-btn
-                    class="ml-2 mt-3"
-                    fab
-                    icon
-                    height="40px"
-                    right
-                    width="40px"
-                  >
-                    <v-icon>mdi-play</v-icon>
-                  </v-btn>
-                </v-card-actions> -->
+        
               </div>
               <v-avatar
                 class="ma-3"

@@ -1,7 +1,7 @@
 <template>
    
   <v-container>
-    <h1 v-if="(!connected || artistName == 'none')" align="center" class="ma-10">Subscribe as an <span class="purple--text">Artist</span></h1>
+    <h1 v-if="(!connected || artistName == 'none')" align="center" class="ma-10 display-1">Subscribe as an <span class="purple--text">Artist</span></h1>
 
     
     <v-row v-if="(!connected || artistName == 'none')" justify="center">
@@ -61,9 +61,6 @@
     </v-row>
     <v-row v-if="(connected && artistName != 'none')" justify="center">
       
-      <!-- <h1 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span><br/>Let's add a song!</h1>
-       -->
-      <!-- <v-btn color="success" class="ma-10" @click="newSong">Let's add a new song</v-btn> -->
       <AddSong :connected="connected" :address="address" :artistName="artistName" />
    
       

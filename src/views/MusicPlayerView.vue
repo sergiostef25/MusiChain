@@ -1,7 +1,7 @@
 <template>
         
     <v-container>
-        <h1 align="center">Music Player</h1>
+        <h1 align="center" class="display-1">Music Player</h1>
         <v-row justify="center" class="mt-10">
             <v-col align="center" cols="12" md="5">
                 <v-file-input
@@ -17,10 +17,11 @@
                 ></v-file-input>
             </v-col>
         </v-row>
-            <v-row justify="center">
+            <v-row justify="center" v-if="(songCover || songFile)">
                 <v-col align="center" cols="12" md="5">
+                    <h2 class="headline mb-5">{{ this.songName }} - {{ this.artistName }}</h2>
                     <v-img 
-                        v-if="(songCover || songFile)"
+                        
                         max-height="500"
                         max-width="500"
                         :src=songCover
@@ -61,7 +62,6 @@
 </template>
   
 <script>
-//import { onMounted } from "vue";
 const crypto = require("crypto-js");
 const Web3 = require('web3');
 const MusiChain = require('../../build/contracts/MusiChain.json');
@@ -75,6 +75,8 @@ export default{
         file: null,
         songFile: null,
         songCover: null,
+        artistName: null,
+        songName: null,
         fail_exp: false,
         fail_prop: false
     }),
@@ -102,7 +104,7 @@ export default{
                     var check_property = false;
                     const result = await contractMusiChain.getPastEvents('rented', {filter: {user: this.address},fromBlock: 0});
                     for (let [key, value] of Object.entries(result)) {
-                        /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
+                        
                         
                         console.log("MD5 "+key+" "+value.returnValues[6]);
 
@@ -113,6 +115,8 @@ export default{
                                 const blob = new Blob([typedArray], { type: "audio/mpeg"});
                                 this.file = window.URL.createObjectURL(blob);
                                 this.songCover = value.returnValues[5];
+                                this.artistName = value.returnValues[1];
+                                this.songName = value.returnValues[2];
                                 check_property = true;
                                 break;
                             }else{

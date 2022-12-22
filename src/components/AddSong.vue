@@ -1,9 +1,9 @@
 <template>
       
     <v-container>
-      <v-row justify="center" v-if="!addsong"><h2>Your Songs</h2></v-row>
+      <v-row justify="center" v-if="!addsong" class="ma-10"><h2 class="display-1">Your Songs</h2></v-row>
       
-      <v-row >
+      <v-row class="mt-10">
         <v-col align="center" cols="12" md="3">
           <v-img 
             v-if="(artistAvatarLink)"
@@ -25,7 +25,7 @@
               </v-row>
           </template>
           </v-img>
-          <h2 align="center" class="mb-10">Hi, <span class="purple--text">{{artistName}}</span></h2>
+          <h2 align="center" class="mb-10 headline">Hi, <span class="purple--text">{{artistName}}</span></h2>
           <v-btn @click="addsong = !addsong" v-if="!addsong" color="purple">Let's add a new song!</v-btn>
           <v-btn @click="addsong = !addsong" v-if="addsong" color="purple">Go to your catalog</v-btn>
           
@@ -278,15 +278,7 @@
           ></v-img>
           <vuetify-audio :file="songFileLink" color="success" v-if="(songCoverLink || songFileLink)"></vuetify-audio>
         </v-col>
-        
-        
-      
-
-      
-
-      </v-row>
-
-      
+      </v-row>   
       <v-snackbar :timeout="3000" v-model="alert_succ" color="success">
         Song successfully added
         <template v-slot:action="{ attrs }">

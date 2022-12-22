@@ -8,27 +8,20 @@
         class="text-center"
         cols="10"
       >
-        <h1 class="text-h4 font-weight-thin mb-4">
-          
-        </h1>
-        <!-- <v-img
+        
+        <v-img
           :src="require('../assets/musichain2.svg')"
           class="my-3"
           contain
           height="130"
         />
-        <h4 class="subheading">
-          MusiChain
-        </h4> -->
-       
-        
-
+        <h4 class="subheading">MusiChain</h4>
       </v-col>
 
       
     </v-row>
-    <v-row align="center" justify="center" class="mb-10">
-      <h2>Our artists</h2>
+    <v-row align="center" justify="center" class="ma-10">
+      <h2 class="headline">Our artists</h2>
     </v-row>
 
   
@@ -102,8 +95,8 @@
           align="center"
           justify="center"
         >
-          <div class="text-h2">
-            <h6> {{ slides[i] }} </h6>  
+          <div class="headline">
+            <h3> {{ slides[i] }} </h3>  
           </div>
         </v-row>
       </v-carousel-item>
@@ -182,7 +175,7 @@
         slides: [
           'Discover our features',
           'Rent songs of your favorite artists',
-          'Upload your songs on the Blockchain',
+          'Music on the Blockchain',
           'Safe and immediate transactions',
         ],
 

@@ -1,55 +1,6 @@
 <template>  
         <v-container>
-          <h1 align="center" class="ma-10">Rent a Song</h1>
-
-          <!-- <v-sheet
-            class="mx-auto"
-            
-            max-width="80%"
-            color="transparent"
-          >
-            <v-slide-group
-              v-model="model"
-              class="pa-4"
-              center-active
-              show-arrows
-            >
-              <v-slide-item
-                v-for="(artist,n) in artistList"
-                :key="n"
-                v-slot="{ active}"
-              >
-              
-                <v-card
-                  :color="active ? 'transparent' : 'transparent'"
-                  class="ma-8"
-                  height="150"
-                  width="100"
-                  elevation="0"
-                  @click="search='c'"
-                  
-                >
-                  <v-row
-                    class="fill-height"
-                    align="center"
-                    justify="center"
-
-                  >
-                  
-                    <v-scale-transition>
-                      <v-img :src="artist.link_avatar" class="rounded-circle"></v-img>
-                      
-                    </v-scale-transition>
-                    {{ artist.name }}
-                  </v-row>
-                  
-                </v-card>
-                
-              </v-slide-item>
-            </v-slide-group>
-          </v-sheet> -->
-          
-
+          <h1 align="center" class="ma-10 display-1">Rent a Song</h1>
 
           <v-row justify="center">
           <v-col align="center" cols="12" md="6">
