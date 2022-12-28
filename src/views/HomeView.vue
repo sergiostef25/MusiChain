@@ -15,7 +15,7 @@
           contain
           height="130"
         />
-        <h4 class="subheading">MusiChain</h4>
+        
       </v-col>
 
       
