@@ -160,7 +160,7 @@ export default{
 
     methods: {
         
-        upload(){
+/*         upload(){
             if(this.songFile != null){
             var reader = new FileReader();
             reader.onloadend = () => {
@@ -176,8 +176,7 @@ export default{
                     console.log("MD5 = "+md5);
                     const result = await contractMusiChain.getPastEvents('rented', {filter: {user: this.address},fromBlock: 0});
                     for (let [, value] of Object.entries(result)) {
-                        /* let randcolor = '#'+(Math.random()*0xFFFFFF<<0).toString(16); */
-                        
+                       
                         console.log(value.returnValues[6]);
 
                         if(value.returnValues[6] == md5 && value.returnValues[4]*1000 > Date.now()){
@@ -202,7 +201,8 @@ export default{
             this.songCover = null;
         }
 
-        },
+        }, */
+
         convertWordArrayToUint8Array(wordArray) {
                 var arrayOfWords = wordArray.words;
                 var length =wordArray.sigBytes;
